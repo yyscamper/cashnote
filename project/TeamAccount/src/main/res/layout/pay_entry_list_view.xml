@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" android:layout_width="fill_parent"
+    android:layout_height="match_parent"
+    android:paddingLeft="4px"
+    android:paddingRight="4px">
+
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_weight="0">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Total Entries: 32"
+            android:id="@+id/textViewTotalPayCount"
+            android:layout_weight="0.5"
+            android:layout_gravity="left" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Total Money: 1098"
+            android:id="@+id/textViewTotalPayMoney"
+            android:layout_weight="0.5"
+            android:layout_gravity="right"
+            android:gravity="right" />
+
+    </LinearLayout>
+
+    <Space
+        android:layout_width="fill_parent"
+        android:layout_height="10px"
+        android:background="#781aff"
+        android:paddingBottom="6px" />
+
+    <ListView
+        android:layout_width="fill_parent"
+        android:layout_height="match_parent"
+        android:id="@+id/listViewPayEntryList"
+        android:layout_weight="1.0"
+        android:visibility="visible" />
+
+</LinearLayout>

@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="4px">
+
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="4px"
+        android:layout_marginRight="4px">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:text="Felix"
+            android:id="@+id/textViewName"
+            android:layout_weight="0.5"
+            android:textSize="24dp"
+            android:layout_marginLeft="6dp"
+            android:layout_marginTop="4dp" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:text="100.9"
+            android:id="@+id/textViewBalance"
+            android:layout_gravity="right"
+            android:gravity="right"
+            android:layout_weight="0.5"
+            android:layout_marginRight="6dp"
+            android:textSize="24dp" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="4px"
+        android:layout_marginRight="4px">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceSmall"
+            android:text="Pay: 3"
+            android:id="@+id/textViewPayCount"
+            android:layout_weight="0.5"
+            android:layout_marginLeft="6dp" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceSmall"
+            android:text="Attend: 10"
+            android:id="@+id/textViewAttendCount"
+            android:layout_gravity="right"
+            android:gravity="right"
+            android:layout_weight="0.5"
+            android:layout_marginRight="6dp" />
+
+    </LinearLayout>
+
+    <Space
+        android:layout_width="fill_parent"
+        android:layout_height="6px"
+        android:layout_gravity="bottom"
+        android:layout_marginBottom="4px"
+        android:background="#1326ff" />
+
+</LinearLayout>

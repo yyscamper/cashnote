@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">Team Account</string>
+
+    <string-array name="fav_locations">
+        <item>耶里夏丽</item>
+        <item>稻谷鸡</item>
+        <item>大成制面</item>
+        <item>斗香园</item>
+        <item>权金城</item>
+        <item>兰州拉面</item>
+        <item>吉祥馄饨</item>
+        <item>西贝筱面村</item>
+        <item>蜀面</item>
+        <item>苏州汤包馆</item>
+    </string-array>
+
+    <string name="title_activity_pay_entry_list_view">Pay History</string>
+    <string name="title_activity_pay_person_list">Person Report</string>
+    <string name="title_activity_input_pay_date">Input Pay Time</string>
+    <string name="action_history">History</string>
+    <string name="action_person_report">Person</string>
+    <string name="action_sync">Sync</string>
+    <string name="action_setting">Setting</string>
+    <string name="action_help">Help</string>
+
+</resources>
