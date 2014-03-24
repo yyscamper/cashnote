@@ -1,0 +1,11 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    xmlns:holo="http://schemas.android.com/apk/res-auto"
+    tools:context="com.yyscamper.cashnote.MainActivity" >
+
+    <!-- Refresh -->
+    <item android:id="@+id/action_sync"
+        android:icon="@drawable/ic_action_refresh"
+        android:title="@string/txtSync"
+        android:showAsAction="ifRoom" />
+</menu>
