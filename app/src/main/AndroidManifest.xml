@@ -36,6 +36,10 @@
             android:name="com.yyscamper.cashnote.LocationGroupActivity"
             android:label="@string/title_activity_location_group" >
         </activity>
+        <activity
+            android:name="com.yyscamper.cashnote.HistoryListActivity"
+            android:label="@string/title_activity_history_list" >
+        </activity>
     </application>
 
 </manifest>

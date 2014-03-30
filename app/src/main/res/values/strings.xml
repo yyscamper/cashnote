@@ -29,5 +29,6 @@
     <string name="title_activity_persons_list">All Persons</string>
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="title_activity_location_group">Location Groups</string>
+    <string name="title_activity_history_list">历史记录</string>
 
 </resources>

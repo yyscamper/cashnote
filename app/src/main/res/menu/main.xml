@@ -9,7 +9,7 @@
         android:title="@string/txtSync"
         android:showAsAction="ifRoom" />
 
-    <item android:id="@+id/action_pay_account"
+    <item android:id="@+id/action_history"
         android:icon="@drawable/ic_action_event"
         android:title="@string/txtAccount"
         android:showAsAction="ifRoom"/>

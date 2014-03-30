@@ -111,6 +111,11 @@ public class MainActivity extends Activity implements ActionBar.TabListener {
             startActivity(intent);
             return true;
         }
+        else if (id == R.id.action_history) {
+            Intent intent = new Intent(this, HistoryListActivity.class);
+            startActivity(intent);
+            return true;
+        }
         else if (id == R.id.action_location_groups) {
             Intent intent = new Intent(this, LocationGroupActivity.class);
             startActivity(intent);
