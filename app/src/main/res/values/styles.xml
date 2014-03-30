@@ -1,0 +1,23 @@
+<resources>
+
+    <!-- Base application theme. -->
+    <style name="AppTheme" parent="android:Theme.Holo.Light.DarkActionBar">
+        <!-- Customize your theme here. -->
+    </style>
+
+    <style name="SeperatorLineStyle">
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/seperator_line_height"
+        android:layout_gravity="top"
+        android:background="#110fff"
+        android:visibility="visible"
+        android:minHeight="@dimen/seperator_line_height"
+    </style>
+
+    <style name="topLayoutPadding">
+        android:paddingLeft = "4dp"
+        android:paddingRight = "4dp"
+        android:paddingTop = "4dp"
+    </style>
+
+</resources>

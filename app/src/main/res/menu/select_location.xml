@@ -1,0 +1,23 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context="com.yyscamper.cashnote.SelectLocationActivity" >
+
+    <item android:id="@+id/action_new_location"
+        android:icon="@drawable/ic_action_new"
+        android:title="新增地点"
+        android:showAsAction="always" />
+
+    <item android:id="@+id/action_accept"
+        android:icon="@drawable/ic_action_accept"
+        android:title="确定"
+        android:showAsAction="always" />
+
+    <item android:id="@+id/action_select_all"
+        android:title="选择全部"
+        android:showAsAction="never" />
+
+    <item android:id="@+id/action_unselect_all"
+        android:title="取消选择"
+        android:showAsAction="never" />
+
+</menu>

@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">CashNote</string>
+    <string name="action_settings">Settings</string>
+    <string name="txtNewPayEntry">New</string>
+    <string name="txtAccount">History</string>
+    <string name="txtPersons">Persons</string>
+    <string name="txtSync">Sync</string>
+    <string name="txtExport">Export</string>
+    <string name="txtHelp">Help</string>
+    <string name="txtOK">OK</string>
+    <string name="txtCancle">Cancle</string>
+    <string name="title_activity_select_location">SelectLocationActivity</string>
+    <string name="hello_world">Hello world!</string>
+    <string name="txtLocation">Location</string>
+    <string name="title_activity_location_list">All Locations</string>
+    <string name="txtAdd">Add</string>
+    <string name="txtRemove">Remove</string>
+    <string name="txtEdit">Edit</string>
+    <string name="txtLocationGroup">Location Group</string>
+    <string name="add_location">Add Locaton</string>
+    <string name="remove_location">Remove Location</string>
+    <string name="edit_location">Edit Location</string>
+    <string name="add_person">Add Person</string>
+    <string name="remove_person">Remove Person</string>
+    <string name="edit_person">Edit Person</string>
+    <string name="remove_person_message">Are you sure want to remove the [%s]?</string>
+    <string name="title_activity_persons_list">All Persons</string>
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="title_activity_location_group">Location Groups</string>
+
+</resources>

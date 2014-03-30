@@ -1,0 +1,14 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context="com.yyscamper.cashnote.LocationGroupActivity" >
+    
+    <item android:id="@+id/action_new_group"
+        android:title="New"
+        android:orderInCategory="100"
+        android:showAsAction="ifRoom" />
+
+    <item android:id="@+id/action_edit_group"
+        android:title="Edit"
+        android:orderInCategory="101"
+        android:showAsAction="ifRoom" />
+</menu>
