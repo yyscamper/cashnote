@@ -11,23 +11,23 @@
 
     <item android:id="@+id/action_history"
         android:icon="@drawable/ic_action_event"
-        android:title="@string/txtAccount"
+        android:title="历史记录"
         android:showAsAction="ifRoom"/>
 
     <!-- Persons -->
     <item android:id="@+id/action_persons"
         android:icon="@drawable/ic_action_person"
-        android:title="@string/txtPersons"
+        android:title="成员管理"
         android:showAsAction="ifRoom" />
 
     <!-- Setting -->
     <item android:id="@+id/action_locations"
-        android:title="@string/txtLocation"
+        android:title="地点管理"
         android:showAsAction="never" />
 
     <!-- Setting -->
     <item android:id="@+id/action_location_groups"
-        android:title="@string/txtLocationGroup"
+        android:title="地点分组"
         android:showAsAction="never" />
 
 
@@ -46,13 +46,13 @@
     <!-- Setting -->
     <item android:id="@+id/action_debug_init_db"
         android:icon="@drawable/ic_action_settings"
-        android:title="Init Database"
+        android:title="[调试]初始化数据库"
         android:showAsAction="never" />
 
     <!-- Help -->
     <item android:id="@+id/action_debug_clear_db"
         android:icon="@drawable/ic_action_help"
-        android:title="Clear Database"
+        android:title="[调试]清空数据库"
         android:showAsAction="never"/>
 
 </menu>

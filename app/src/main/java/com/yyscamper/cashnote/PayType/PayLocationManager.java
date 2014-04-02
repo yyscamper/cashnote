@@ -1,7 +1,6 @@
 package com.yyscamper.cashnote.PayType;
 
 import com.yyscamper.cashnote.Storage.LocalStorage;
-import com.yyscamper.cashnote.Util.LeftRightValue;
 
 import java.util.*;
 /**
@@ -25,6 +24,7 @@ public class PayLocationManager {
         if (storageSelect == StorageSelector.CACHE || storageSelect == StorageSelector.ALL) {
             mAllLocations.put(p.Name, p);
             p.Status = SyncStatus.CACHE_NEW;
+            updateTopResult(p);
         }
 
         if (storageSelect == StorageSelector.LOCAL || storageSelect == StorageSelector.ALL) {

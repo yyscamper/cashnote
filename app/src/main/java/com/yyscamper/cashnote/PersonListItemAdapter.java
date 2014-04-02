@@ -74,8 +74,8 @@ public class PersonListItemAdapter extends BaseAdapter {
 
         personNameView.setText(person.Name);
         personBalanceView.setText(String.format("%.1f", person.Balance));
-        personPayCountView.setText("Pay:" + String.valueOf(person.PayCount));
-        personAttendCountView.setText("Attend:" + String.valueOf(person.AttendCount));
+        personPayCountView.setText("付款次数:" + String.valueOf(person.PayCount));
+        personAttendCountView.setText("出席次数:" + String.valueOf(person.AttendCount));
 
         return convertView;
     }

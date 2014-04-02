@@ -4,4 +4,6 @@
     <dimen name="activity_vertical_margin">16dp</dimen>
     <dimen name="seperator_line_height">1dp</dimen>
     <dimen name="list_big_font_size">22dp</dimen>
+    <dimen name="min_row_height">42dp</dimen>
+    <dimen name="btn_normal_width">72dp</dimen>
     </resources>

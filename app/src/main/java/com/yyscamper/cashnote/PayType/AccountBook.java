@@ -13,10 +13,16 @@ public class AccountBook {
     }
 
     public static void debug_clear_db() {
-        PayLocationManager.clear(StorageSelector.ALL);
-        PayPersonManager.clear(StorageSelector.ALL);
-        PayHistoryManager.clear(StorageSelector.ALL);
-        LocationGroupManager.clear(StorageSelector.ALL);
+
+        try {
+            PayLocationManager.clear(StorageSelector.ALL);
+            PayPersonManager.clear(StorageSelector.ALL);
+            PayHistoryManager.clear(StorageSelector.ALL);
+            LocationGroupManager.clear(StorageSelector.ALL);
+        }
+        catch (Throwable err) {
+            err.printStackTrace();
+        }
     }
 
     public static void debug_init_db() {
@@ -72,10 +78,19 @@ public class AccountBook {
         PayPersonManager.setLocalStorage(mLocalStorage);
         PayLocationManager.setLocalStorage(mLocalStorage);
         LocationGroupManager.setLocalStorage(mLocalStorage);
-        mLocalStorage.reloadAllPersons();
-        mLocalStorage.reloadAllLocations();
-        mLocalStorage.reloadAllHistories();
-        mLocalStorage.realodAllLocationGroups();
+
+        //debug_clear_db();
+        //debug_init_db();
+
+        try {
+            mLocalStorage.reloadAllPersons();
+            mLocalStorage.reloadAllLocations();
+            mLocalStorage.reloadAllHistories();
+            mLocalStorage.realodAllLocationGroups();
+        }
+        catch (Throwable err) {
+
+        }
     }
 
     public static boolean addPay(PayHistory entry, StorageSelector selector)

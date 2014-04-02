@@ -72,8 +72,8 @@ public class LocationListItemAdapter extends BaseAdapter {
         TextView viewLastAttendTime = (TextView) convertView.findViewById(R.id.textViewLastAttendTime);
 
         viewName.setText(location.Name);
-        viewAttendCount.setText("AttendCount:" + String.valueOf(location.AttendCount));
-        viewLastAttendTime.setText("LastTime:" + Util.formatDisplayTime(location.LastAttendTime));
+        viewAttendCount.setText(String.valueOf(location.AttendCount));
+        viewLastAttendTime.setText(Util.formatDate(location.LastAttendTime));
 
         return convertView;
     }

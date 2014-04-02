@@ -63,16 +63,8 @@ public class LocationGroupActivity extends Activity {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 mCurrGroupPosition = position;
-                if (mIsGroupSelectionMode) {
-                    Intent outIntent = new Intent();
-                    outIntent.putExtra("selected_item", getGroupName(mCurrGroupPosition));
-                    setResult(RESULT_OK, outIntent);
-                    finish();
-                }
-                else {
-                    mListViewGroupNames.setItemChecked(mCurrGroupPosition, true);
-                    updateChildrenData();
-                }
+                mListViewGroupNames.setItemChecked(mCurrGroupPosition, true);
+                updateChildrenData();
             }
         });
 
@@ -164,6 +156,7 @@ public class LocationGroupActivity extends Activity {
         
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.location_group, menu);
+        menu.findItem(R.id.action_accept).setVisible(mIsGroupSelectionMode);
         return true;
     }
 
@@ -181,6 +174,15 @@ public class LocationGroupActivity extends Activity {
             handleSelectChildren();
             return true;
         }
+        else if (id == R.id.action_accept) {
+            if (mIsGroupSelectionMode) {
+                Intent outIntent = new Intent();
+                outIntent.putExtra("selected_item", getGroupName(mCurrGroupPosition));
+                setResult(RESULT_OK, outIntent);
+                finish();
+            }
+            return true;
+        }
         return super.onOptionsItemSelected(item);
     }
 
@@ -188,11 +190,11 @@ public class LocationGroupActivity extends Activity {
     public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
         super.onCreateContextMenu(menu, v, menuInfo);
         if (v == mListViewGroupNames) {
-            menu.add(1, MENU_REMOVE_GROUP, 0, "Remove Group");
+            menu.add(1, MENU_REMOVE_GROUP, 0, "删除分组");
             menu.add(1, MENU_CLONE_GROUP, 1, "Clone Group");
         }
         else if (v == mListViewChildrenNames) {
-            menu.add(2, MENU_REMOVE_CHILD, 0, "Remove Child");
+            menu.add(2, MENU_REMOVE_CHILD, 0, "删除地点");
         }
     }
 
@@ -218,9 +220,9 @@ public class LocationGroupActivity extends Activity {
     private void handleNewGroup()
     {
         AlertDialog.Builder dialog = new AlertDialog.Builder(this);
-        dialog.setTitle("New Group");
+        dialog.setTitle("新建分组");
         final EditText input = new EditText(this);
-        input.setHint("Please type a group name here");
+        input.setHint("请在此输入分组名称");
             dialog.setView(input);
 
             dialog.setPositiveButton(getString(R.string.txtOK), new DialogInterface.OnClickListener() {
@@ -228,11 +230,11 @@ public class LocationGroupActivity extends Activity {
                 public void onClick(DialogInterface dialog, int which) {
                     String str = input.getText().toString().trim();
                     if (str.length() == 0) {
-                        Util.ShowErrorDialog(getApplication(), "The group name cannot be empty!", "Error");
+                        Util.ShowErrorDialog(getApplication(), "分组的名称不能为空！", "错误");
                         return;
                     }
                     else if (LocationGroupManager.contains(str)) {
-                        Util.ShowErrorDialog(getApplication(), "The group name has already existed!", "Error");
+                        Util.ShowErrorDialog(getApplication(), "该分组名称已经存在了，请重新输入!", "错误");
                         return;
                     }
                     LocationGroupManager.add(new LocationGroup(str), StorageSelector.ALL);
@@ -250,8 +252,8 @@ public class LocationGroupActivity extends Activity {
         }
         AlertDialog.Builder dialog = new AlertDialog.Builder(this);
         final String groupName = getGroupName(mCurrGroupPosition);
-        dialog.setTitle("Remove Group " + groupName);
-        dialog.setMessage("Are you sure want to remove the group \"" + groupName + "\"?");
+        dialog.setTitle("删除分组 " + groupName);
+        dialog.setMessage("你确定要删除分组 \"" + groupName + "\"吗?");
 
         dialog.setPositiveButton(getString(R.string.txtOK), new DialogInterface.OnClickListener() {
             @Override
@@ -273,9 +275,9 @@ public class LocationGroupActivity extends Activity {
 
     void handleCloneGroup() {
         AlertDialog.Builder dialog = new AlertDialog.Builder(this);
-        dialog.setTitle("Clone Group");
+        dialog.setTitle("复制分组");
         final EditText input = new EditText(this);
-        input.setHint("Please type a group name here");
+        input.setHint("请在此输入分组名称");
         dialog.setView(input);
 
         dialog.setPositiveButton(getString(R.string.txtOK), new DialogInterface.OnClickListener() {
@@ -283,11 +285,11 @@ public class LocationGroupActivity extends Activity {
             public void onClick(DialogInterface dialog, int which) {
                 String str = input.getText().toString().trim();
                 if (str.length() == 0) {
-                    Util.ShowErrorDialog(getApplication(), "The group name cannot be empty!", "Error");
+                    Util.ShowErrorDialog(getApplication(), "分组的名称不能为空！", "错误");
                     return;
                 }
                 else if (LocationGroupManager.contains(str)) {
-                    Util.ShowErrorDialog(getApplication(), "The group name has already existed!", "Error");
+                    Util.ShowErrorDialog(getApplication(), "该分组名称已经存在了，请重新输入!", "错误");
                     return;
                 }
                 LocationGroup cloneGroup = new LocationGroup(str);
@@ -312,8 +314,8 @@ public class LocationGroupActivity extends Activity {
         AlertDialog.Builder dialog = new AlertDialog.Builder(this);
         final LocationGroup locGroup = getGroup(mCurrGroupPosition);
         final String childName = getCurrChildName();
-        dialog.setTitle("Remove Child " + childName);
-        dialog.setMessage("Are you sure want to remove the child \"" + childName + "\" from group \"" + locGroup.Name + "\"?");
+        dialog.setTitle("删除地点 " + childName);
+        dialog.setMessage("你确定要从分组\"" + locGroup.Name + "\"中删除地点\"" + childName + "\"吗?");
 
         dialog.setPositiveButton(getString(R.string.txtOK), new DialogInterface.OnClickListener() {
             @Override

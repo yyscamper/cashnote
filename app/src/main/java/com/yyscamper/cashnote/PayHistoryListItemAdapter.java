@@ -3,6 +3,8 @@ package com.yyscamper.cashnote;
 import android.content.*;
 import android.view.*;
 import com.yyscamper.cashnote.PayType.*;
+import com.yyscamper.cashnote.Util.Util;
+
 import java.util.*;
 
 import android.widget.*;
@@ -70,7 +72,7 @@ public class PayHistoryListItemAdapter extends BaseAdapter {
 
         PayHistory entry = mEntryList.get(position);
         TextView payDateView = (TextView) convertView.findViewById(R.id.textViewPayDate);
-        payDateView.setText(entry.PayTime.format("%Y-%m-%-d %A"));
+        payDateView.setText(Util.formatDate(entry.PayTime));
 
         TextView payerNameView = (TextView) convertView.findViewById(R.id.textViewPayerName);
         payerNameView.setText(entry.PayerName);
@@ -79,7 +81,7 @@ public class PayHistoryListItemAdapter extends BaseAdapter {
         locationView.setText(entry.Location);
 
         TextView moneyView = (TextView) convertView.findViewById(R.id.textViewMoney);
-        moneyView.setText(String.valueOf(entry.Money));
+        moneyView.setText(String.format("%.1f", entry.Money));
 
         TextView attendView = (TextView) convertView.findViewById(R.id.textViewAttendPersons);
         attendView.setText(entry.getAttendPersonNameString());

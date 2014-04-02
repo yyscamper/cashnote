@@ -9,6 +9,9 @@ public class PayPerson {
 	public double Balance;
     public Time LastModifyTime;
 	public int Status;
+    public String Email;
+    public String Phone;
+
 	public PayPerson(String name) {
 		Name = name;
 		PayCount = 0;
@@ -17,12 +20,17 @@ public class PayPerson {
         LastModifyTime = new Time();
         LastModifyTime.setToNow();
         Status = SyncStatus.UNKNOWN;
+
+        Email = "unknown@gmail.com";
+        Phone = "12892571479";
 	}
 
     public PayPerson() {
         LastModifyTime = new Time();
         LastModifyTime.setToNow();
         Status = SyncStatus.UNKNOWN;
+        Email = "unknown@gmail.com";
+        Phone = "12892571479";
     }
 
     public boolean validate() {

@@ -16,6 +16,8 @@ import android.text.format.*;
 import com.yyscamper.cashnote.PayType.*;
 import com.yyscamper.cashnote.Util.Util;
 
+import java.util.Calendar;
+
 /**
  * A placeholder fragment containing a simple view.
  */
@@ -73,8 +75,9 @@ public class FragmentNewPayEntry extends Fragment {
         mViewSelectTime = (TextView)rootView.findViewById(R.id.textViewSelectTime);
         mViewSelectLocation = (TextView)rootView.findViewById(R.id.textViewSelectLocation);
         mCurrentTime = new Time();
+        mCurrentTime.normalize(false);
         mCurrentTime.setToNow();
-        mViewSelectTime.setText(Util.formatDisplayTime(mCurrentTime));
+        mViewSelectTime.setText(Util.formatDate(mCurrentTime));
 
         mViewSelectPayer.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -186,19 +189,22 @@ public class FragmentNewPayEntry extends Fragment {
     }
 
     private void handleSelectTime() {
-        new DatePickerDialog(
+        DatePickerDialog dpd = new DatePickerDialog(
                 getActivity(),
                 new DatePickerDialog.OnDateSetListener() {
                     @Override
                     public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
                         mCurrentTime.set(dayOfMonth, monthOfYear, year);
+                        mCurrentTime.normalize(false);
                         mViewSelectTime.setText(mCurrentTime.format("%Y-%m-%d %A"));
                     }
                 },
                 mCurrentTime.year,
                 mCurrentTime.month,
                 mCurrentTime.monthDay
-        ).show();
+        );
+        dpd.getDatePicker().setMaxDate(Calendar.getInstance().getTimeInMillis());
+        dpd.show();
     }
 
     private void handleSelectLocation() {
@@ -219,7 +225,7 @@ public class FragmentNewPayEntry extends Fragment {
             if (resultCode != Activity.RESULT_OK)
                 return;
             mSelectedAttend = data.getStringArrayExtra("selected_items");
-            mViewSelectAttends.setText(Util.stringArrayJoin(mSelectedAttend, ","));
+            mViewSelectAttends.setText(Util.stringArrayJoin(mSelectedAttend, ", "));
         }
         else if (RequestCodeSelectLocation == requestCode) {
             if (resultCode != Activity.RESULT_OK)

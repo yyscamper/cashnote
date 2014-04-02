@@ -1,7 +1,7 @@
 package com.yyscamper.cashnote.PayType;
 
 import com.yyscamper.cashnote.Storage.LocalStorage;
-import com.yyscamper.cashnote.Util.LeftRightValue;
+import com.yyscamper.cashnote.Util.ValuePair;
 
 import java.util.*;
 /**
@@ -17,9 +17,9 @@ public class PayPersonManager {
     public static int SORT_ATTEND_COUNT_ASCENDING = 6;
     public static int SORT_ATTEND_COUNT_DESCENDING = 7;
 
-    private static LeftRightValue[] mTopSurplusPersons = new LeftRightValue[3];
-    private static LeftRightValue[] mTopDebetPersons = new LeftRightValue[3];
-    private static LeftRightValue mMostDebetPerson = null;
+    private static ValuePair[] mTopSurplusPersons = new ValuePair[3];
+    private static ValuePair[] mTopDebetPersons = new ValuePair[3];
+    private static ValuePair mMostDebetPerson = null;
 
     private static Hashtable<String, PayPerson> mAllPersons = new Hashtable<String, PayPerson>();
 
@@ -270,36 +270,36 @@ public class PayPersonManager {
     {
         for (int i = 0; i < mTopSurplusPersons.length; i++) {
             if (mTopSurplusPersons[i] != null) {
-                Double v = (Double)mTopSurplusPersons[i].RightValue;
+                Double v = (Double)mTopSurplusPersons[i].Value1;
                 if (p.Balance > v.doubleValue()) {
                     for (int j = mTopSurplusPersons.length-1; j > i; j--) {
                         mTopSurplusPersons[j] = mTopSurplusPersons[j-1];
                     }
-                    mTopSurplusPersons[i] = new LeftRightValue(p.Name, Double.valueOf(p.Balance));
+                    mTopSurplusPersons[i] = new ValuePair(p.Name, Double.valueOf(p.Balance));
                     break;
                 }
             }
             else
             {
-                mTopSurplusPersons[i] = new LeftRightValue(p.Name, Double.valueOf(p.Balance));
+                mTopSurplusPersons[i] = new ValuePair(p.Name, Double.valueOf(p.Balance));
                 break;
             }
         }
 
         for (int i = 0; i < mTopDebetPersons.length; i++) {
             if (mTopDebetPersons[i] != null) {
-                Double v = (Double)mTopDebetPersons[i].RightValue;
+                Double v = (Double)mTopDebetPersons[i].Value1;
                 if (p.Balance < v.doubleValue()) {
                     for (int j = mTopDebetPersons.length-1; j > i; j--) {
                         mTopDebetPersons[j] = mTopDebetPersons[j-1];
                     }
-                    mTopDebetPersons[i] = new LeftRightValue(p.Name, Double.valueOf(p.Balance));
+                    mTopDebetPersons[i] = new ValuePair(p.Name, Double.valueOf(p.Balance));
                     break;
                 }
             }
             else
             {
-                mTopDebetPersons[i] = new LeftRightValue(p.Name, Double.valueOf(p.Balance));
+                mTopDebetPersons[i] = new ValuePair(p.Name, Double.valueOf(p.Balance));
                 break;
             }
         }
@@ -307,15 +307,15 @@ public class PayPersonManager {
         mMostDebetPerson = mTopDebetPersons[0];
     }
 
-    public static LeftRightValue[] getTopSurplusPersons() {
+    public static ValuePair[] getTopSurplusPersons() {
         return mTopSurplusPersons;
     }
 
-    public static LeftRightValue[] getTopDebetPersons() {
+    public static ValuePair[] getTopDebetPersons() {
         return mTopDebetPersons;
     }
 
-    public static LeftRightValue getMostDebetPerson() {
+    public static ValuePair getMostDebetPerson() {
         return mMostDebetPerson;
     }
 }

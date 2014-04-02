@@ -10,16 +10,17 @@
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:layout_marginLeft="4px"
-        android:layout_marginRight="4px">
+        android:layout_marginRight="4px"
+        android:paddingRight="4dp"
+        android:paddingLeft="4dp">
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:textAppearance="?android:attr/textAppearanceMedium"
             android:text="Felix"
             android:id="@+id/textViewName"
             android:layout_weight="0.5"
-            android:textSize="21dp"
             android:layout_marginLeft="6dp"
             android:layout_marginTop="4dp"
             android:layout_gravity="left" />
@@ -27,13 +28,12 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:textAppearance="?android:attr/textAppearanceMedium"
             android:text="100.9"
             android:id="@+id/textViewBalance"
             android:gravity="right"
             android:layout_weight="0.5"
             android:layout_marginRight="6dp"
-            android:textSize="21dp"
             android:layout_gravity="right" />
 
     </LinearLayout>
@@ -43,7 +43,9 @@
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:layout_marginLeft="4px"
-        android:layout_marginRight="4px">
+        android:layout_marginRight="4px"
+        android:paddingRight="4dp"
+        android:paddingLeft="4dp">
 
         <TextView
             android:layout_width="wrap_content"

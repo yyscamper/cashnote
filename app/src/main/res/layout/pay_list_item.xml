@@ -2,7 +2,10 @@
 
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical" android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:paddingBottom="4dp"
+    android:paddingLeft="4dp"
+    android:paddingRight="4dp">
 
     <LinearLayout
         android:orientation="horizontal"
@@ -13,25 +16,26 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textAppearance="?android:attr/textAppearanceSmall"
-            android:text="2013-03-15 Monday"
-            android:id="@+id/textViewPayDate"
-            android:layout_gravity="left"
-            android:gravity="clip_horizontal|left"
+            android:text="Felix Yuan"
+            android:id="@+id/textViewPayerName"
+            android:layout_gravity="center_vertical|left"
             android:layout_weight="0.5"
-            android:layout_marginLeft="6dp"
-            android:layout_marginTop="6dp" />
+            android:layout_marginRight="6dp"
+            android:layout_marginTop="6dp"
+            android:gravity="left" />
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textAppearance="?android:attr/textAppearanceSmall"
-            android:text="Felix Yuan"
-            android:id="@+id/textViewPayerName"
-            android:layout_gravity="right"
-            android:gravity="right"
+            android:text="2013-03-15 Monday"
+            android:id="@+id/textViewPayDate"
+            android:layout_gravity="center_vertical|right"
+            android:gravity="clip_horizontal|right"
             android:layout_weight="0.5"
-            android:layout_marginRight="6dp"
+            android:layout_marginLeft="6dp"
             android:layout_marginTop="6dp" />
+
     </LinearLayout>
 
     <LinearLayout
@@ -47,16 +51,17 @@
             android:id="@+id/textViewLocation"
             android:layout_weight="0.6"
             android:layout_marginLeft="6dp"
-            android:textSize="21dp" />
+            android:textSize="21dp"
+            android:layout_gravity="center_vertical" />
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:textAppearance="?android:attr/textAppearanceMedium"
             android:text="128"
             android:id="@+id/textViewMoney"
             android:layout_weight="0.4"
-            android:layout_gravity="right"
+            android:layout_gravity="center_vertical|right"
             android:gravity="right"
             android:layout_marginRight="6dp"
             android:textSize="21dp" />
@@ -75,13 +80,8 @@
             android:id="@+id/textViewAttendPersons"
             android:layout_marginLeft="6dp"
             android:layout_marginRight="6dp"
-            android:maxLines="1" />
+            android:maxLines="1"
+            android:layout_gravity="center_vertical" />
     </LinearLayout>
-
-    <View
-        android:layout_width="fill_parent"
-        android:layout_height="@dimen/seperator_line_height"
-        android:background="?android:attr/listDivider"
-    />
 
 </LinearLayout>

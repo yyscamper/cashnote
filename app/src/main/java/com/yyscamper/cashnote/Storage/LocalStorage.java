@@ -33,6 +33,8 @@ public class LocalStorage extends SQLiteOpenHelper {
     public static final String KEY_PERSON_BLANCE = "blance";
     public static final String KEY_PERSON_LAST_MODIFIED_TIME = "last_modify_time";
     public static final String KEY_PERSON_STATUS = "status";
+    public static final String KEY_PERSON_EMAIL = "email";
+    public static final String KEY_PERSON_PHONE ="phone";
 
     public static final String KEY_LOCATION_NAME = "name";
     public static final String KEY_LOCATION_ATTEND_COUNT = "attend_account";
@@ -75,7 +77,9 @@ public class LocalStorage extends SQLiteOpenHelper {
             KEY_PERSON_ATTEND_COUNT + " integer not null, " +
             KEY_PERSON_PAY_COUNT + " integer not null, " +
             KEY_PERSON_STATUS + " integer not null, " +
-            KEY_PERSON_LAST_MODIFIED_TIME + " timestamp not null" +
+            KEY_PERSON_LAST_MODIFIED_TIME + " timestamp not null, " +
+            KEY_PERSON_EMAIL + " char(129), " +
+            KEY_PERSON_PHONE + " char(32)" +
             ")";
 
 
@@ -177,6 +181,8 @@ public class LocalStorage extends SQLiteOpenHelper {
         values.put(KEY_PERSON_PAY_COUNT, person.PayCount);
         values.put(KEY_PERSON_LAST_MODIFIED_TIME, person.LastModifyTime.toMillis(true));
         values.put(KEY_PERSON_STATUS, person.Status);
+        values.put(KEY_PERSON_EMAIL, person.Email);
+        values.put(KEY_PERSON_PHONE, person.Phone);
         return values;
     }
 
@@ -314,6 +320,8 @@ public class LocalStorage extends SQLiteOpenHelper {
                 person.AttendCount = c.getInt(c.getColumnIndex(KEY_PERSON_ATTEND_COUNT));
                 person.PayCount = c.getInt(c.getColumnIndex(KEY_PERSON_PAY_COUNT));
                 person.Status = c.getInt(c.getColumnIndex(KEY_PERSON_STATUS));
+                person.Email = c.getString(c.getColumnIndex(KEY_PERSON_EMAIL));
+                person.Phone = c.getString(c.getColumnIndex(KEY_PERSON_PHONE));
                 long timeMs = c.getLong(c.getColumnIndex(KEY_PERSON_LAST_MODIFIED_TIME));
                 person.LastModifyTime.set(timeMs);
                 PayPersonManager.add(person, StorageSelector.CACHE);

@@ -107,7 +107,7 @@ public class MainActivity extends Activity implements ActionBar.TabListener {
             return true;
         }
         else if (id == R.id.action_persons) {
-            Intent intent = new Intent(this, PersonsListActivity.class);
+            Intent intent = new Intent(this, PersonManagerActivity.class);
             startActivity(intent);
             return true;
         }
@@ -177,7 +177,7 @@ public class MainActivity extends Activity implements ActionBar.TabListener {
                     f0.setSectionNumber(position + 1);
                     return f0;
                 case 1:
-                    FragmentRandomSelectLocation f1 = FragmentRandomSelectLocation.getInstance();
+                    FragmentWhereDinner f1 = FragmentWhereDinner.getInstance();
                     f1.setSectionNumber(position + 1);
                     //FragmentPayHistory f1 = FragmentPayHistory.getInstance();
                     //f1.setSectionNumber(position + 1);
@@ -207,9 +207,9 @@ public class MainActivity extends Activity implements ActionBar.TabListener {
                 case 0:
                     return getString(R.string.txtNewPayEntry).toUpperCase(l);
                 case 1:
-                    return "Where".toUpperCase(l);
+                    return "哪儿吃".toUpperCase(l);
                 case 2:
-                    return "Dashboard".toUpperCase(l);
+                    return "统计".toUpperCase(l);
             }
             return null;
         }

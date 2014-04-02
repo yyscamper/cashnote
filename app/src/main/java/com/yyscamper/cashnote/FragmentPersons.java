@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Fragment;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.ContextMenu;
 import android.view.LayoutInflater;
@@ -34,9 +35,9 @@ public class FragmentPersons extends Fragment {
     private TextView mViewTotalPayCount;
     private TextView mViewTotalMoney;
     private ListView mViewPersonList;
-    private int mSortType = PayPersonManager.SORT_MONEY_ASCENDING;
+    private int mSortType = PayPersonManager.SORT_NAME_ASCENDING;
     private int mSelectedPosition;
-
+    private PersonListItemAdapter mAdapter;
     private static final String ARG_SECTION_NUMBER = "section_number";
 
     public FragmentPersons() {
@@ -49,13 +50,12 @@ public class FragmentPersons extends Fragment {
         this.setArguments(args);
     }
 
-    private void refreshData() {
+    public void refreshData() {
         if (mViewPersonList == null)
             return;
 
-        PersonListItemAdapter adapter = new PersonListItemAdapter(this.getActivity(), PayPersonManager.getAllPersons(mSortType), mSortType);
-        mViewPersonList.setAdapter(adapter);
-        adapter.notifyDataSetChanged();
+        mAdapter = new PersonListItemAdapter(this.getActivity(), PayPersonManager.getAllPersons(mSortType), mSortType);
+        mViewPersonList.setAdapter(mAdapter);
     }
 
     @Override
@@ -68,6 +68,17 @@ public class FragmentPersons extends Fragment {
             public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
                 mSelectedPosition = position;
                 return false;
+            }
+        });
+
+        mViewPersonList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                PayPerson person = (PayPerson)mAdapter.getItem(position);
+                Intent intent = new Intent(getActivity(), PersonDetailActivity.class);
+                intent.putExtra("mode", PersonDetailActivity.MODE_VIEW);
+                intent.putExtra("name", person.Name);
+                startActivity(intent);
             }
         });
         refreshData();

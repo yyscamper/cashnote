@@ -4,6 +4,7 @@ import android.app.*;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.util.SparseBooleanArray;
 import android.view.KeyEvent;
 import android.view.Menu;
@@ -12,14 +13,15 @@ import android.view.View;
 import android.widget.*;
 import com.yyscamper.cashnote.PayType.*;
 
-public class SelectPersonActivity extends Activity implements AdapterView.OnItemClickListener {
+public class SelectPersonActivity extends Activity implements AdapterView.OnItemClickListener, SearchView.OnQueryTextListener {
 	ListView mListView = null;
+    SearchView mSearchView = null;
 
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_select_persons);
 		mListView = (ListView)findViewById(R.id.listViewPersons);
-
+        mSearchView = (SearchView)findViewById(R.id.searchView);
         int choiceMode = getIntent().getIntExtra("choice_mode", ListView.CHOICE_MODE_SINGLE);
         if (choiceMode == ListView.CHOICE_MODE_MULTIPLE) {
             mListView.setAdapter(new ArrayAdapter<String>(this, android.R.layout.simple_list_item_multiple_choice,
@@ -50,6 +52,14 @@ public class SelectPersonActivity extends Activity implements AdapterView.OnItem
         if (choiceMode == ListView.CHOICE_MODE_SINGLE) {
             mListView.setOnItemClickListener(this);
         }
+
+        mListView.setTextFilterEnabled(true);
+
+        mSearchView.setIconifiedByDefault(false);
+        mSearchView.setOnQueryTextListener(this);
+        mSearchView.setSubmitButtonEnabled(true);
+        mSearchView.setQueryHint("搜索");
+        mSearchView.setFocusable(false);
 	}
 
     @Override
@@ -118,5 +128,20 @@ public class SelectPersonActivity extends Activity implements AdapterView.OnItem
         outIntent.putExtra("selected_item", str);
         setResult(RESULT_OK, outIntent);
         this.finish();
+    }
+
+    @Override
+    public boolean onQueryTextSubmit(String query) {
+        return false;
+    }
+
+    @Override
+    public boolean onQueryTextChange(String newText) {
+        if (TextUtils.isEmpty(newText)) {
+            mListView.clearTextFilter();
+        } else {
+            mListView.setFilterText(newText.toString());
+        }
+        return true;
     }
 }

@@ -1,14 +1,25 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     tools:context="com.yyscamper.cashnote.LocationGroupActivity" >
-    
-    <item android:id="@+id/action_new_group"
-        android:title="New"
+
+
+    <item android:id="@+id/action_accept"
+        android:title="确定"
+        android:icon="@drawable/ic_action_accept"
         android:orderInCategory="100"
+        android:showAsAction="always" />
+
+
+    <item android:id="@+id/action_new_group"
+        android:title="新建"
+        android:icon="@drawable/ic_action_new"
+        android:orderInCategory="101"
         android:showAsAction="ifRoom" />
 
     <item android:id="@+id/action_edit_group"
-        android:title="Edit"
-        android:orderInCategory="101"
+        android:title="编辑"
+        android:icon="@drawable/ic_action_edit"
+        android:orderInCategory="102"
         android:showAsAction="ifRoom" />
+
 </menu>

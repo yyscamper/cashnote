@@ -1,6 +1,5 @@
 package com.yyscamper.cashnote;
 
-import android.content.ContentValues;
 import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -8,25 +7,20 @@ import android.view.ViewGroup;
 import android.widget.BaseExpandableListAdapter;
 import android.widget.TextView;
 
-import com.yyscamper.cashnote.Util.LeftRightValue;
+import com.yyscamper.cashnote.Util.ValuePair;
 
-import java.security.KeyPair;
-import java.security.acl.Group;
-import java.util.Hashtable;
 import java.util.List;
-
-import javax.net.ssl.SSLEngineResult;
 
 /**
  * Created by yuanf on 2014-03-29.
  */
 public class DashboardExpandableAdapter extends BaseExpandableListAdapter {
     private String[] mGroups;
-    private List<LeftRightValue[]> mChildren;
+    private List<ValuePair[]> mChildren;
     private Context mContext;
     private LayoutInflater mInflater;
 
-    public DashboardExpandableAdapter(Context ctx, String[] groups, List<LeftRightValue[]> children) {
+    public DashboardExpandableAdapter(Context ctx, String[] groups, List<ValuePair[]> children) {
         mContext = ctx;
         mGroups = groups;
         mChildren = children;
@@ -40,7 +34,7 @@ public class DashboardExpandableAdapter extends BaseExpandableListAdapter {
 
     @Override
     public int getChildrenCount(int groupPosition) {
-        LeftRightValue[] arr = mChildren.get(groupPosition);
+        ValuePair[] arr = mChildren.get(groupPosition);
         return arr.length;
     }
 
@@ -51,7 +45,7 @@ public class DashboardExpandableAdapter extends BaseExpandableListAdapter {
 
     @Override
     public Object getChild(int groupPosition, int childPosition) {
-        LeftRightValue[] arr = mChildren.get(groupPosition);
+        ValuePair[] arr = mChildren.get(groupPosition);
         return arr[childPosition];
     }
 
@@ -89,10 +83,10 @@ public class DashboardExpandableAdapter extends BaseExpandableListAdapter {
         }
         TextView tvLeft = (TextView)convertView.findViewById(R.id.textViewColumnLeft);
         TextView tvRight = (TextView)convertView.findViewById(R.id.textViewColumnRight);
-        LeftRightValue lfv = (LeftRightValue)getChild(groupPosition, childPosition);
-        if (lfv != null && lfv.LeftValue != null && lfv.RightValue != null) {
-            tvLeft.setText(lfv.LeftValue.toString() + "   ");
-            tvRight.setText(lfv.RightValue.toString());
+        ValuePair lfv = (ValuePair)getChild(groupPosition, childPosition);
+        if (lfv != null && lfv.Value0 != null && lfv.Value1 != null) {
+            tvLeft.setText(lfv.Value0.toString() + "   ");
+            tvRight.setText(lfv.Value1.toString());
         }
         else {
             tvLeft.setText("N/A");

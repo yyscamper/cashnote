@@ -5,6 +5,7 @@ import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.util.SparseBooleanArray;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -14,6 +15,7 @@ import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.MultiAutoCompleteTextView;
+import android.widget.SearchView;
 
 import com.yyscamper.cashnote.PayType.PayLocation;
 import com.yyscamper.cashnote.PayType.PayLocationManager;
@@ -21,19 +23,16 @@ import com.yyscamper.cashnote.PayType.StorageSelector;
 import com.yyscamper.cashnote.R;
 import com.yyscamper.cashnote.Util.Util;
 
-public class SelectLocationActivity extends Activity implements AdapterView.OnItemClickListener {
-    private MultiAutoCompleteTextView mFilterLocationView;
+public class SelectLocationActivity extends Activity implements AdapterView.OnItemClickListener, SearchView.OnQueryTextListener {
+    private SearchView mFilterLocationView;
     private ListView mListLocationView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_select_location);
-        mFilterLocationView = (MultiAutoCompleteTextView)findViewById(R.id.multiAutoCompTextViewInputLocation);
+        mFilterLocationView = (SearchView)findViewById(R.id.searchViewFilter);
         mListLocationView = (ListView)findViewById(R.id.listViewLocations);
-
-        ArrayAdapter filterAdapter = new ArrayAdapter(this, android.R.layout.simple_spinner_item, PayLocationManager.getAllNames());
-        mFilterLocationView.setAdapter(filterAdapter);
 
         int choiceMode = getIntent().getIntExtra("choice_mode", ListView.CHOICE_MODE_SINGLE);
         ArrayAdapter listAdapter;
@@ -57,7 +56,13 @@ public class SelectLocationActivity extends Activity implements AdapterView.OnIt
         }
         mListLocationView.setAdapter(listAdapter);
         mListLocationView.setOnItemClickListener(this);
-        mFilterLocationView.setOnItemClickListener(this);
+        mListLocationView.setTextFilterEnabled(true);
+
+        mFilterLocationView.setIconifiedByDefault(false);
+        mFilterLocationView.setOnQueryTextListener(this);
+        mFilterLocationView.setSubmitButtonEnabled(true);
+        mFilterLocationView.setQueryHint("搜索");
+        mFilterLocationView.setFocusable(false);
     }
 
     @Override
@@ -156,5 +161,20 @@ public class SelectLocationActivity extends Activity implements AdapterView.OnIt
         });
         dialog.setNegativeButton(getString(R.string.txtCancle), null);
         dialog.show();
+    }
+
+    @Override
+    public boolean onQueryTextSubmit(String query) {
+        return false;
+    }
+
+    @Override
+    public boolean onQueryTextChange(String newText) {
+        if (TextUtils.isEmpty(newText)) {
+            mListLocationView.clearTextFilter();
+        } else {
+            mListLocationView.setFilterText(newText.toString());
+        }
+        return true;
     }
 }
