@@ -53,10 +53,29 @@ public class AccountBook {
         PayLocationManager.add("四海游龙", storageSelector);
         PayLocationManager.add("汉堡王", storageSelector);
 
-        addPay(new PayHistory(100, "Felix", new String[] {"Felix", "Andy", "Alfred", "Simon"},
+        addPay(PayHistory.buildAvgHistory(null, 100, "Felix", new String[]{"Felix", "Andy", "Alfred", "Simon"},
                 null, "稻谷鸡", "Here we are"), storageSelector);
-        addPay(new PayHistory(60, "Andy", new String[] {"Felix", "Andy", "Leo"},
+        addPay(PayHistory.buildAvgHistory(null, 60, "Andy", new String[]{"Felix", "Andy", "Leo"},
                 null, "兰州拉面", "Not so bad"),  storageSelector);
+
+        PayAttendInfo[] atts = new PayAttendInfo[4];
+        atts[0] = new PayAttendInfo("Felix", 20);
+        atts[1] = new PayAttendInfo("Andy", 30);
+        atts[2] = new PayAttendInfo("Leo", 40);
+        atts[3] = new PayAttendInfo("Simon", 50);
+        PayHistory entry = PayHistory.buildNotAvgHistory(null, "Felix", atts, null, "稻谷鸡", "一般般好吃的啦");
+        entry.Money = entry.calcMoneySum();
+        addPay(entry, storageSelector);
+
+        atts = new PayAttendInfo[5];
+        atts[0] = new PayAttendInfo("Felix", 19);
+        atts[1] = new PayAttendInfo("Andy", 15);
+        atts[2] = new PayAttendInfo("Leo", 15);
+        atts[3] = new PayAttendInfo("Simon", 20);
+        atts[4] = new PayAttendInfo("Tao", 18);
+        entry = PayHistory.buildNotAvgHistory(null, "Simon", atts, null, "汉堡王", "有点点撑的啊");
+        entry.Money = entry.calcMoneySum();
+        addPay(entry, storageSelector);
 
         LocationGroup group1 = new LocationGroup("多人就餐");
         group1.setChildren(new String[] {"耶里夏丽", "西贝筱面村", "稻谷鸡", "望湘园"});
@@ -101,9 +120,9 @@ public class AccountBook {
         if (!PayPersonManager.contains(entry.PayerName)) {
             PayPersonManager.add(entry.PayerName, selector);
         }
-        for (String str : entry.AttendPersonNames) {
-            if (!PayPersonManager.contains(str)) {
-                PayPersonManager.add(str, selector);
+        for (PayAttendInfo str : entry.AttendsInfo) {
+            if (!PayPersonManager.contains(str.getName())) {
+                PayPersonManager.add(str.getName(), selector);
             }
         }
         if (!PayLocationManager.contains(entry.Location)) {
@@ -113,17 +132,25 @@ public class AccountBook {
         PayPerson payer = entry.getPayer();
         PayPerson[] attends = entry.getAttends();
         PayLocation loc = PayLocationManager.get(entry.Location);
+        if (entry.Type == PayHistory.TYPE_NORMAL_AVG) {
+            double avg = entry.Money / attends.length;
+            for (int i = 0; i < attends.length; i++) {
+                attends[i].AttendCount++;
+                attends[i].Balance -= avg;
+            }
+        }
+        else {
+            //entry.Money = entry.calcMoneySum();
+            for (int i = 0; i < attends.length; i++) {
+                attends[i].AttendCount++;
+                attends[i].Balance -= entry.AttendsInfo[i].getMoney();
+            }
+        }
+        mTotalMoney += entry.Money;
 
         //update history, money, person balance
-        mTotalMoney += entry.Money;
         payer.PayCount++;
         payer.Balance += entry.Money;
-        double avg = entry.Money / entry.AttendPersonNames.length;
-        for (PayPerson p : attends)
-        {
-            p.AttendCount++;
-            p.Balance -= avg;
-        }
 
         //update location
         loc.AttendCount++;
@@ -150,12 +177,21 @@ public class AccountBook {
         if (payer.PayCount > 0)
             payer.PayCount--;
         payer.Balance -= entry.Money;
-        double avg = entry.Money / entry.AttendPersonNames.length;
-        for (PayPerson p : attends)
-        {
-            if (p.AttendCount > 0)
-                p.AttendCount--;
-            p.Balance += avg;
+
+        if (entry.Type == PayHistory.TYPE_NORMAL_AVG) {
+            double avg = entry.Money / attends.length;
+            for (int i = 0; i < attends.length; i++) {
+                if (attends[i].AttendCount > 0)
+                    attends[i].AttendCount--;
+                attends[i].Balance += avg;
+            }
+        }
+        else {
+            for (int i = 0; i < attends.length; i++) {
+                if (attends[i].AttendCount > 0)
+                    attends[i].AttendCount--;
+                attends[i].Balance += entry.AttendsInfo[i].getMoney();
+            }
         }
 
         if (loc != null)

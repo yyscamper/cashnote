@@ -4,11 +4,11 @@ import android.text.format.Time;
 
 public class PayPerson {
 	public String Name;
-	public long PayCount;
-	public long AttendCount;
-	public double Balance;
+    public long PayCount;
+    public long AttendCount;
+    public double Balance;
     public Time LastModifyTime;
-	public int Status;
+    public int Status;
     public String Email;
     public String Phone;
 

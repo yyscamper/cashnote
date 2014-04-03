@@ -84,7 +84,8 @@ public class PayHistoryListItemAdapter extends BaseAdapter {
         moneyView.setText(String.format("%.1f", entry.Money));
 
         TextView attendView = (TextView) convertView.findViewById(R.id.textViewAttendPersons);
-        attendView.setText(entry.getAttendPersonNameString());
+        //attendView.setText(entry.toStringOfAttends(entry.Type));
+        attendView.setText("");
 
         return convertView;
     }

@@ -29,7 +29,7 @@
             android:label="@string/title_activity_location_list" >
         </activity>
         <activity
-            android:name=".PersonManagerActivity"
+            android:name="com.yyscamper.cashnote.PersonManagerActivity"
             android:label="@string/title_activity_persons_list" >
         </activity>
         <activity
@@ -43,6 +43,10 @@
         <activity
             android:name="com.yyscamper.cashnote.PersonDetailActivity"
             android:label="@string/title_activity_person_detail" >
+        </activity>
+        <activity
+            android:name="com.yyscamper.cashnote.AttendInfoInputActivity"
+            android:label="@string/title_activity_attend_info_input" >
         </activity>
     </application>
 

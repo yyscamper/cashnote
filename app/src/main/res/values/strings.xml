@@ -33,5 +33,6 @@
     <string name="activity_select_persons">选择成员</string>
     <string name="activity_location_groups">所有地点分组</string>
     <string name="title_activity_person_detail">成员信息</string>
+    <string name="title_activity_attend_info_input">选择成员与分账</string>
 
 </resources>

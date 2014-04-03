@@ -88,8 +88,14 @@ public class SimpleRowDoubleColumnListAdapter extends BaseAdapter {
         else
             viewLeft.setText("");
 
-        if (val != null && val.Value1 != null)
-            viewRight.setText(val.Value1.toString());
+        if (val != null && val.Value1 != null) {
+            if (val.Value1 instanceof Double) {
+                viewRight.setText(String.format("%.1f", ((Double)val.Value1).doubleValue()));
+            }
+            else {
+                viewRight.setText(val.Value1.toString());
+            }
+        }
         else
             viewRight.setText("");
         return convertView;

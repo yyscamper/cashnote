@@ -30,6 +30,7 @@ public class FragmentNewPayEntry extends Fragment {
     private static final int RequestCodeSelectAttendPersons = 1;
     private static final int RequestCodeSelectLocation = 2;
     private static final int RequestCodeSelectPayer = 3;
+    private static final int RequestCodeSelectAttendPersonsNotAvg = 10;
 
     private static FragmentNewPayEntry mInstance;
     private String[] mSelectedAttend = new String[0];
@@ -42,6 +43,7 @@ public class FragmentNewPayEntry extends Fragment {
     private TextView mViewSelectTime;
     private TextView mViewSelectLocation;
     private Button   mViewSave;
+    private RadioButton mRadioButtonAvg;
 
     /**
      * Returns a new instance of this fragment for the given section
@@ -74,10 +76,18 @@ public class FragmentNewPayEntry extends Fragment {
         mViewSelectAttends = (TextView)rootView.findViewById(R.id.textViewSelectAttends);
         mViewSelectTime = (TextView)rootView.findViewById(R.id.textViewSelectTime);
         mViewSelectLocation = (TextView)rootView.findViewById(R.id.textViewSelectLocation);
+        mRadioButtonAvg = (RadioButton)rootView.findViewById(R.id.radioButtonAvg);
         mCurrentTime = new Time();
         mCurrentTime.normalize(false);
         mCurrentTime.setToNow();
         mViewSelectTime.setText(Util.formatDate(mCurrentTime));
+
+        mRadioButtonAvg.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
+                mViewInputMoney.setEnabled(b);
+            }
+        });
 
         mViewSelectPayer.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -134,29 +144,33 @@ public class FragmentNewPayEntry extends Fragment {
 
     private void saveNewPayHistory()
     {
-        PayHistory entry = new PayHistory();
+        double money;
+        String desc, loc, payerName;
+        String[] attNames;
+
         if (mViewInputMoney.getText().toString().trim().length() <= 0) {
             showAlertDialog("The input money should not be empty!", "Error Input Money");
             return;
         }
         try {
-            entry.Money = Double.valueOf(mViewInputMoney.getText().toString().trim());
+            money = Double.valueOf(mViewInputMoney.getText().toString().trim());
         } catch (Exception err) {
             err.printStackTrace();
             showAlertDialog(err.getMessage(), "Error");
             return;
         }
 
-        entry.Description = mViewDescription.getText().toString();
-        entry.Location = mViewSelectLocation.getText().toString();
-        entry.PayerName = mViewSelectPayer.getText().toString();
+        desc = mViewDescription.getText().toString();
+        loc = mViewSelectLocation.getText().toString();
+        payerName = mViewSelectPayer.getText().toString();
 
         if (mSelectedAttend == null || mSelectedAttend.length <= 0)
         {
             showAlertDialog("You didn't select any attend persons!", "Error");
             return;
         }
-        entry.AttendPersonNames =  mSelectedAttend.clone();
+        attNames =  mSelectedAttend.clone();
+        PayHistory entry = PayHistory.buildAvgHistory(null, money, payerName, attNames, mCurrentTime, loc, desc);
 
         if (!AccountBook.addPay(entry, StorageSelector.ALL))
         {
@@ -182,10 +196,16 @@ public class FragmentNewPayEntry extends Fragment {
         startActivityForResult(intent, RequestCodeSelectPayer);
     }
     private void handleSelectAttends() {
-        Intent intent = new Intent(getActivity(), SelectPersonActivity.class);
-        intent.putExtra("pre_selected_items", mSelectedAttend);
-        intent.putExtra("choice_mode", ListView.CHOICE_MODE_MULTIPLE);
-        startActivityForResult(intent, RequestCodeSelectAttendPersons);
+        if (mRadioButtonAvg.isChecked()) {
+            Intent intent = new Intent(getActivity(), SelectPersonActivity.class);
+            intent.putExtra("pre_selected_items", mSelectedAttend);
+            intent.putExtra("choice_mode", ListView.CHOICE_MODE_MULTIPLE);
+            startActivityForResult(intent, RequestCodeSelectAttendPersons);
+        }
+        else {
+            Intent intent = new Intent(getActivity(), AttendInfoInputActivity.class);
+            startActivityForResult(intent, RequestCodeSelectAttendPersonsNotAvg);
+        }
     }
 
     private void handleSelectTime() {
@@ -232,6 +252,17 @@ public class FragmentNewPayEntry extends Fragment {
                 return;
             String selected_loc = data.getStringExtra("selected_item");
             mViewSelectLocation.setText(selected_loc);
+        }
+        else if (RequestCodeSelectAttendPersonsNotAvg == requestCode) {
+            if (resultCode != Activity.RESULT_OK)
+                return;
+            PayAttendInfo[] atts = (PayAttendInfo[])data.getParcelableArrayExtra("results");
+            StringBuilder sb = new StringBuilder();
+            for (PayAttendInfo p : atts)
+                sb.append(p.toString() + ",");
+            if (sb.length() > 0)
+                sb.deleteCharAt(sb.length()-1);
+            mViewSelectAttends.setText(sb.toString());
         }
     }
 }
