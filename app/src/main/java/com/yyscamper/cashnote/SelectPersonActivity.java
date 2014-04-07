@@ -19,8 +19,8 @@ public class SelectPersonActivity extends Activity implements AdapterView.OnItem
 
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.activity_select_persons);
-		mListView = (ListView)findViewById(R.id.listViewPersons);
+		setContentView(R.layout.search_list_view);
+		mListView = (ListView)findViewById(R.id.listView);
         mSearchView = (SearchView)findViewById(R.id.searchView);
         int choiceMode = getIntent().getIntExtra("choice_mode", ListView.CHOICE_MODE_SINGLE);
         if (choiceMode == ListView.CHOICE_MODE_MULTIPLE) {
@@ -37,12 +37,14 @@ public class SelectPersonActivity extends Activity implements AdapterView.OnItem
         if (choiceMode == ListView.CHOICE_MODE_MULTIPLE) {
             if (getIntent().hasExtra("pre_selected_items")) {
                 String[] arrSelected = getIntent().getStringArrayExtra("pre_selected_items");
-                for (String str : arrSelected) {
-                    for (int i = 0; i < mListView.getAdapter().getCount(); i++) {
-                        String name = (String) mListView.getAdapter().getItem(i);
-                        if (str.compareToIgnoreCase(name) == 0) {
-                            mListView.setItemChecked(i, true);
-                            break;
+                if (arrSelected != null) {
+                    for (String str : arrSelected) {
+                        for (int i = 0; i < mListView.getAdapter().getCount(); i++) {
+                            String name = (String) mListView.getAdapter().getItem(i);
+                            if (str.compareToIgnoreCase(name) == 0) {
+                                mListView.setItemChecked(i, true);
+                                break;
+                            }
                         }
                     }
                 }

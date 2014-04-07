@@ -46,7 +46,7 @@
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="价格"
+            android:text="总金额"
             android:id="@+id/textViewMoney"
             android:layout_weight="1.0"
             android:layout_gravity="center_vertical" />
@@ -112,7 +112,7 @@
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="与席者"
+            android:text="成员"
             android:id="@+id/textViewAttends"
             android:layout_weight="1.0"
             android:layout_gravity="center_vertical" />

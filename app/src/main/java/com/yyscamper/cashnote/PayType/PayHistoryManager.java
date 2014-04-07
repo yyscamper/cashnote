@@ -1,5 +1,6 @@
 package com.yyscamper.cashnote.PayType;
 
+import com.yyscamper.cashnote.Storage.CloudStorage;
 import com.yyscamper.cashnote.Storage.LocalStorage;
 
 import java.util.*;
@@ -11,9 +12,14 @@ public class PayHistoryManager
 {
     private static Hashtable<String, PayHistory> mAllHistories = new Hashtable<String, PayHistory>();
     private static LocalStorage mLocalStorage = null;
+    private static CloudStorage mCloudStorage = null;
 
     public static void setLocalStorage(LocalStorage s) {
         mLocalStorage = s;
+    }
+
+    public static void setCloudStorage(CloudStorage s) {
+        mCloudStorage = s;
     }
 
     public static int size() {
@@ -59,7 +65,10 @@ public class PayHistoryManager
         }
 
         if (storageSelect == StorageSelector.CLOUD || storageSelect == StorageSelector.ALL) {
-            //TODO:
+            if (mCloudStorage != null) {
+                p.Status = SyncStatus.SERVER_SYNCED;
+                mCloudStorage.insertPayHistory(p);
+            }
         }
         return true;
     }
@@ -81,7 +90,9 @@ public class PayHistoryManager
         }
 
         if (storageSelect == StorageSelector.CLOUD || storageSelect == StorageSelector.ALL) {
-            //TODO:
+            if (mCloudStorage != null) {
+                mCloudStorage.removePayHistory(uuid);
+            }
         }
         return true;
     }
@@ -96,13 +107,15 @@ public class PayHistoryManager
         }
 
         if (storageSelect == StorageSelector.CLOUD || storageSelect == StorageSelector.ALL) {
-            //TODO:
+            if (mCloudStorage != null) {
+                mCloudStorage.clearAllPayHistories();
+            }
         }
         return true;
     }
 
 
-    public static boolean update(PayHistory p, StorageSelector storageSelect) {
+    public static boolean update(String oldUuid, PayHistory p, StorageSelector storageSelect) {
         if (p == null || !p.validate()) {
             return false;
         }
@@ -118,9 +131,10 @@ public class PayHistoryManager
         }
 
         if (storageSelect == StorageSelector.CLOUD || storageSelect == StorageSelector.ALL) {
-            //TODO:
+            if (mCloudStorage != null) {
+                mCloudStorage.updatePayHistory(oldUuid, p);
+            }
         }
-
         return true;
     }
 }

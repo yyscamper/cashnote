@@ -2,6 +2,7 @@ package com.yyscamper.cashnote.PayType;
 
 import android.location.Location;
 
+import com.yyscamper.cashnote.Storage.CloudStorage;
 import com.yyscamper.cashnote.Storage.LocalStorage;
 
 import java.util.Hashtable;
@@ -12,9 +13,10 @@ import java.util.Hashtable;
 public class LocationGroupManager {
     static Hashtable<String, LocationGroup> mAllLocationGroups = new Hashtable<String, LocationGroup>();
     static LocalStorage mLocalStorage;
-
+    static CloudStorage mCloudStorage;
     public static int size() { return mAllLocationGroups.size();}
     public static void setLocalStorage(LocalStorage s) { mLocalStorage = s; }
+    public static void setCloudStorage(CloudStorage s) { mCloudStorage = s; }
     public static boolean contains(String name) {
         return mAllLocationGroups.containsKey(name);
     }
@@ -47,7 +49,9 @@ public class LocationGroupManager {
         }
 
         if (storageSelect == StorageSelector.CLOUD || storageSelect == StorageSelector.ALL) {
-            //TODO:
+            if (mCloudStorage != null) {
+                mCloudStorage.insertLocationGroup(p);
+            }
         }
         return true;
     }
@@ -67,10 +71,12 @@ public class LocationGroupManager {
         }
 
         if (storageSelect == StorageSelector.CLOUD || storageSelect == StorageSelector.ALL) {
-            //TODO:
+            if (mCloudStorage != null) {
+                mCloudStorage.removeLocationGroup(name);
+            }
+        }
+        return true;
     }
-    return true;
-}
 
     public static boolean clear(StorageSelector storageSelect) {
         if (storageSelect == StorageSelector.CACHE || storageSelect == StorageSelector.ALL) {
@@ -82,13 +88,15 @@ public class LocationGroupManager {
         }
 
         if (storageSelect == StorageSelector.CLOUD || storageSelect == StorageSelector.ALL) {
-            //TODO:
+            if (mCloudStorage != null) {
+                mCloudStorage.clearAllLocationGroups();
+            }
         }
         return true;
     }
 
 
-    public static boolean update(LocationGroup p, StorageSelector storageSelect) {
+    public static boolean update(String oldName, LocationGroup p, StorageSelector storageSelect) {
         if (p == null || !p.validate()) {
             return false;
         }
@@ -102,7 +110,9 @@ public class LocationGroupManager {
         }
 
         if (storageSelect == StorageSelector.CLOUD || storageSelect == StorageSelector.ALL) {
-            //TODO:
+            if (mCloudStorage != null) {
+                mCloudStorage.updateLocationGroup(oldName, p);
+            }
         }
 
         return true;

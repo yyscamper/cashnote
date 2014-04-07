@@ -163,11 +163,11 @@ public class LocalStorage extends SQLiteOpenHelper {
         values.put(KEY_PAY_UUID, entry.UUIDString);
         values.put(KEY_PAY_MONEY, entry.Money);
         values.put(KEY_PAY_PAYER_NAME, entry.PayerName);
-        values.put(KEY_PAY_ATTENDS, entry.toStringOfAttends(entry.Type));
+        values.put(KEY_PAY_ATTENDS, entry.encodeAttends(entry.Type));
         values.put(KEY_PAY_LOCATION, entry.Location);
         values.put(KEY_PAY_DESCRIPTION, entry.Description);
         values.put(KEY_PAY_TIME, entry.PayTime.toMillis(true));
-        values.put(KEY_PAY_LAST_MODIFIED_TIME, entry.LastLocalModifyTime.toMillis(true));
+        values.put(KEY_PAY_LAST_MODIFIED_TIME, entry.LastModityTime.toMillis(true));
         values.put(KEY_PAY_STATUS, entry.Status);
         values.put(KEY_PAY_TYPE, entry.Type);
         return values;
@@ -297,11 +297,11 @@ public class LocalStorage extends SQLiteOpenHelper {
                 entry.Location = c.getString(c.getColumnIndex(KEY_PAY_LOCATION));
                 entry.Description = c.getString(c.getColumnIndex(KEY_PAY_DESCRIPTION));
                 entry.Type = c.getInt(c.getColumnIndex(KEY_PAY_TYPE));
-                entry.fromStringOfAttends(c.getString(c.getColumnIndex(KEY_PAY_ATTENDS)), entry.Type);
+                entry.decodeAttends(c.getString(c.getColumnIndex(KEY_PAY_ATTENDS)), entry.Type);
                 long timeMs = c.getLong(c.getColumnIndex(KEY_PAY_TIME));
                 entry.PayTime.set(timeMs);
                 timeMs = c.getLong(c.getColumnIndex(KEY_PAY_LAST_MODIFIED_TIME));
-                entry.LastLocalModifyTime.set(timeMs);
+                entry.LastModityTime.set(timeMs);
                 PayHistoryManager.add(entry, StorageSelector.CACHE);
             } while (c.moveToNext());
         }

@@ -33,6 +33,17 @@ public class PayPerson {
         Phone = "12892571479";
     }
 
+    public void copyFrom(PayPerson p) {
+        Name = p.Name;
+        PayCount = p.PayCount;
+        AttendCount = p.AttendCount;
+        Balance = p.Balance;
+        Email = p.Email;
+        Phone = p.Phone;
+        Status = p.Status;
+        LastModifyTime.set(p.LastModifyTime);
+    }
+
     public boolean validate() {
         return true;
     }

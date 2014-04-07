@@ -14,13 +14,11 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.ListView;
-import android.widget.MultiAutoCompleteTextView;
 import android.widget.SearchView;
 
 import com.yyscamper.cashnote.PayType.PayLocation;
 import com.yyscamper.cashnote.PayType.PayLocationManager;
 import com.yyscamper.cashnote.PayType.StorageSelector;
-import com.yyscamper.cashnote.R;
 import com.yyscamper.cashnote.Util.Util;
 
 public class SelectLocationActivity extends Activity implements AdapterView.OnItemClickListener, SearchView.OnQueryTextListener {
@@ -30,9 +28,9 @@ public class SelectLocationActivity extends Activity implements AdapterView.OnIt
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_select_location);
-        mFilterLocationView = (SearchView)findViewById(R.id.searchViewFilter);
-        mListLocationView = (ListView)findViewById(R.id.listViewLocations);
+        setContentView(R.layout.search_list_view);
+        mFilterLocationView = (SearchView)findViewById(R.id.searchView);
+        mListLocationView = (ListView)findViewById(R.id.listView);
 
         int choiceMode = getIntent().getIntExtra("choice_mode", ListView.CHOICE_MODE_SINGLE);
         ArrayAdapter listAdapter;
@@ -71,7 +69,7 @@ public class SelectLocationActivity extends Activity implements AdapterView.OnIt
         if (mListLocationView.getChoiceMode() == ListView.CHOICE_MODE_MULTIPLE) {
             getMenuInflater().inflate(R.menu.select_location, menu);
         }
-        return true;
+        return super.onCreateOptionsMenu(menu);
     }
 
     @Override
@@ -149,11 +147,11 @@ public class SelectLocationActivity extends Activity implements AdapterView.OnIt
             public void onClick(DialogInterface dialog, int which) {
                 String str = input.getText().toString().trim();
                 if (str.length() == 0) {
-                    Util.ShowErrorDialog(getApplication(), "The location name cannot be empty!", "Error");
+                    Util.showErrorDialog(getApplication(), "The location name cannot be empty!", "Error");
                     return;
                 }
                 else if (PayLocationManager.contains(str)) {
-                    Util.ShowErrorDialog(getApplication(), "The location has already existed!", "Error");
+                    Util.showErrorDialog(getApplication(), "The location has already existed!", "Error");
                     return;
                 }
                 PayLocationManager.add(new PayLocation(str), StorageSelector.ALL);

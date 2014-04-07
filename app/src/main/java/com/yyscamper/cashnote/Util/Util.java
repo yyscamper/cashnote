@@ -2,10 +2,17 @@ package com.yyscamper.cashnote.Util;
 
 import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.graphics.Paint;
 import android.text.TextUtils;
 import android.text.format.Time;
 import android.widget.TextView;
+
+import com.yyscamper.cashnote.Adapter.ListItemLocationAdapter;
+import com.yyscamper.cashnote.PayType.PayAttendInfo;
+import com.yyscamper.cashnote.PayType.PayLocationManager;
+import com.yyscamper.cashnote.PayType.StorageSelector;
+import com.yyscamper.cashnote.R;
 
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -42,11 +49,25 @@ public class Util {
         return formatDisplayTime(t);
     }
 
-    public static void ShowErrorDialog(Context ctx, String msg, String title) {
+    public static void showErrorDialog(Context ctx, String msg, String title) {
         AlertDialog.Builder dialog = new AlertDialog.Builder(ctx);
         dialog.setTitle(title);
         dialog.setMessage(msg);
         dialog.setPositiveButton("OK", null);
+        dialog.show();
+    }
+
+    public static void showErrorDialog(Context ctx, String msg) {
+        showErrorDialog(ctx, msg, "错误");
+    }
+
+    public static void showConfirmDialog(Context ctx, String msg, String title, DialogInterface.OnClickListener positiveListen) {
+        AlertDialog.Builder dialog = new AlertDialog.Builder(ctx);
+        dialog.setTitle(title);
+        dialog.setMessage(msg);
+
+        dialog.setPositiveButton("确定", positiveListen);
+        dialog.setNegativeButton("取消", null);
         dialog.show();
     }
 
@@ -60,5 +81,38 @@ public class Util {
             }
         }
         return sb.toString();
+    }
+
+    public static double calcMoneySum(PayAttendInfo[] atts) {
+        if (atts == null) {
+            return 0.0;
+        }
+        double sum = 0;
+        for (PayAttendInfo p : atts) {
+            sum += p.getMoney();
+        }
+        return sum;
+    }
+
+    public ValuePair[] convertArrayPayAttendInfoToValuePair(PayAttendInfo[] atts) {
+        ValuePair[] vps = new ValuePair[atts.length];
+        for (int i = 0; i < atts.length; i++) {
+            vps[i] = new ValuePair(atts[i].getName(), atts[i].getMoney());
+        }
+        return vps;
+    }
+
+    public static String formatPrettyDouble(double val) {
+        if (Math.abs(val) < 0.01) {
+            return "";
+        }
+        int ival = (int)val;
+        double delta = Math.abs(val - ival);
+        if (delta < 0.01) {
+            return String.format("%d", ival);
+        }
+        else {
+            return String.format("%.1f", val);
+        }
     }
 }

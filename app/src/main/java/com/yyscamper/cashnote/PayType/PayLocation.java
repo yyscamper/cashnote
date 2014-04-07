@@ -2,8 +2,6 @@ package com.yyscamper.cashnote.PayType;
 
 import android.text.format.*;
 
-import com.yyscamper.cashnote.PayHistoryListItemAdapter;
-
 /**
  * Created by YuanYu on 14-3-16.
  */
@@ -43,5 +41,13 @@ public class PayLocation {
         if (Time.compare(LastAttendTime, t) < 0) {
             LastAttendTime = t;
         }
+    }
+
+    public void copyFrom(PayLocation loc) {
+        this.Name = loc.Name;
+        this.AttendCount = loc.AttendCount;
+        this.LastAttendTime.set(loc.LastAttendTime);
+        this.LastModifyTime.set(loc.LastModifyTime);
+        this.Status = loc.Status;
     }
 }

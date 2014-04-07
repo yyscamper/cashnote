@@ -1,5 +1,7 @@
 package com.yyscamper.cashnote.PayType;
 
+import android.text.format.Time;
+
 import java.util.ArrayList;
 
 /**
@@ -8,6 +10,8 @@ import java.util.ArrayList;
 public class LocationGroup {
     public String Name;
     public ArrayList<String> mChildren;
+    public int Status;
+    public Time LastModifyTime;
 
     public LocationGroup() {
         mChildren = new ArrayList<String>();
@@ -16,6 +20,9 @@ public class LocationGroup {
     public LocationGroup(String name) {
         Name = name;
         mChildren = new ArrayList<String>();
+        Status = SyncStatus.UNKNOWN;
+        LastModifyTime = new Time();
+        LastModifyTime.setToNow();
     }
 
     public int getChildrenCount() {

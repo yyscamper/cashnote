@@ -1,0 +1,37 @@
+
+<LinearLayout
+    android:orientation="vertical"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="同步所有"
+        android:id="@+id/buttonSyncAll" />
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="同步消费历史"
+        android:id="@+id/buttonSyncHistory" />
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="同步成员信息"
+        android:id="@+id/buttonSyncPersons" />
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="同步地点信息"
+        android:id="@+id/buttonSyncLocation" />
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="同步地点分组"
+        android:id="@+id/buttonSyncLocationGroup" />
+</LinearLayout>

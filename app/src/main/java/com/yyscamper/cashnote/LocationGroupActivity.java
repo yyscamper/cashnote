@@ -16,8 +16,6 @@ import android.widget.ListView;
 
 import com.yyscamper.cashnote.PayType.LocationGroup;
 import com.yyscamper.cashnote.PayType.LocationGroupManager;
-import com.yyscamper.cashnote.PayType.PayLocation;
-import com.yyscamper.cashnote.PayType.PayLocationManager;
 import com.yyscamper.cashnote.PayType.StorageSelector;
 import com.yyscamper.cashnote.Util.Util;
 
@@ -191,7 +189,7 @@ public class LocationGroupActivity extends Activity {
         super.onCreateContextMenu(menu, v, menuInfo);
         if (v == mListViewGroupNames) {
             menu.add(1, MENU_REMOVE_GROUP, 0, "删除分组");
-            menu.add(1, MENU_CLONE_GROUP, 1, "Clone Group");
+            menu.add(1, MENU_CLONE_GROUP, 1, "复制分组");
         }
         else if (v == mListViewChildrenNames) {
             menu.add(2, MENU_REMOVE_CHILD, 0, "删除地点");
@@ -230,11 +228,11 @@ public class LocationGroupActivity extends Activity {
                 public void onClick(DialogInterface dialog, int which) {
                     String str = input.getText().toString().trim();
                     if (str.length() == 0) {
-                        Util.ShowErrorDialog(getApplication(), "分组的名称不能为空！", "错误");
+                        Util.showErrorDialog(getApplication(), "分组的名称不能为空！", "错误");
                         return;
                     }
                     else if (LocationGroupManager.contains(str)) {
-                        Util.ShowErrorDialog(getApplication(), "该分组名称已经存在了，请重新输入!", "错误");
+                        Util.showErrorDialog(getApplication(), "该分组名称已经存在了，请重新输入!", "错误");
                         return;
                     }
                     LocationGroupManager.add(new LocationGroup(str), StorageSelector.ALL);
@@ -285,11 +283,11 @@ public class LocationGroupActivity extends Activity {
             public void onClick(DialogInterface dialog, int which) {
                 String str = input.getText().toString().trim();
                 if (str.length() == 0) {
-                    Util.ShowErrorDialog(getApplication(), "分组的名称不能为空！", "错误");
+                    Util.showErrorDialog(getApplication(), "分组的名称不能为空！", "错误");
                     return;
                 }
                 else if (LocationGroupManager.contains(str)) {
-                    Util.ShowErrorDialog(getApplication(), "该分组名称已经存在了，请重新输入!", "错误");
+                    Util.showErrorDialog(getApplication(), "该分组名称已经存在了，请重新输入!", "错误");
                     return;
                 }
                 LocationGroup cloneGroup = new LocationGroup(str);
@@ -323,7 +321,7 @@ public class LocationGroupActivity extends Activity {
                 locGroup.removeChild(childName);
                 mChildrenAdapterTable.remove(locGroup.Name); //remove the item from quick look-up table, so next time it can create a new one.
                 updateChildrenData();
-                LocationGroupManager.update(locGroup, StorageSelector.ALL);
+                LocationGroupManager.update(locGroup.Name, locGroup, StorageSelector.ALL);
             }
         });
         dialog.setNegativeButton(getString(R.string.txtCancle), null);
@@ -341,13 +339,18 @@ public class LocationGroupActivity extends Activity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == REQUEST_CODE_SELECT_CHILDREN) {
-            String[] selChildrenNames = data.getStringArrayExtra("selected_items");
-            if (selChildrenNames != null) {
-                LocationGroup group = getGroup(mCurrGroupPosition);
-                group.setChildren(selChildrenNames);
-                mChildrenAdapterTable.remove(group.Name);
-                selectGroup(mCurrGroupPosition);
-                LocationGroupManager.update(group, StorageSelector.ALL);
+            if (resultCode != RESULT_OK) {
+                return;
+            }
+            if (data != null && data.hasExtra("selected_items")) {
+                String[] selChildrenNames = data.getStringArrayExtra("selected_items");
+                if (selChildrenNames != null) {
+                    LocationGroup group = getGroup(mCurrGroupPosition);
+                    group.setChildren(selChildrenNames);
+                    mChildrenAdapterTable.remove(group.Name);
+                    selectGroup(mCurrGroupPosition);
+                    LocationGroupManager.update(group.Name, group, StorageSelector.ALL);
+                }
             }
         }
         else {

@@ -1,5 +1,6 @@
 package com.yyscamper.cashnote.PayType;
 
+import com.yyscamper.cashnote.Storage.CloudStorage;
 import com.yyscamper.cashnote.Storage.LocalStorage;
 import com.yyscamper.cashnote.Util.ValuePair;
 
@@ -24,9 +25,13 @@ public class PayPersonManager {
     private static Hashtable<String, PayPerson> mAllPersons = new Hashtable<String, PayPerson>();
 
     private static LocalStorage mLocalStorage;
+    private static CloudStorage mCloudStorage;
 
     public static void setLocalStorage(LocalStorage s) {
         mLocalStorage = s;
+    }
+    public static void setCloudStorage(CloudStorage s) {
+        mCloudStorage = s;
     }
 
     public static boolean contains(String name) {
@@ -56,7 +61,9 @@ public class PayPersonManager {
         }
 
         if (storageSelect == StorageSelector.CLOUD || storageSelect == StorageSelector.ALL) {
-            //TODO:
+            if (mCloudStorage != null) {
+                mCloudStorage.insertPayPerson(p);
+            }
         }
         return true;
     }
@@ -89,7 +96,9 @@ public class PayPersonManager {
         }
 
         if (storageSelect == StorageSelector.CLOUD || storageSelect == StorageSelector.ALL) {
-            //TODO:
+            if (mCloudStorage != null) {
+                mCloudStorage.removePayPerson(name);
+            }
         }
         return true;
     }
@@ -104,20 +113,32 @@ public class PayPersonManager {
         }
 
         if (storageSelect == StorageSelector.CLOUD || storageSelect == StorageSelector.ALL) {
-            //TODO:
+            if (mCloudStorage != null) {
+                mCloudStorage.clearAllPayPersons();
+            }
         }
         return true;
     }
 
 
-    public static boolean update(PayPerson p, StorageSelector storageSelect) {
+    public static boolean update(String oldName, PayPerson p, StorageSelector storageSelect) {
         if (p == null || !p.validate()) {
             return false;
         }
 
         if (storageSelect == StorageSelector.CACHE || storageSelect == StorageSelector.ALL) {
-            p.Status = SyncStatus.CACHE_UPDATED;
-            //do nothing
+            p.LastModifyTime.setToNow();
+            if (oldName.equalsIgnoreCase(p.Name)) {
+                p.Status = SyncStatus.CACHE_UPDATED;
+                PayPerson oldPerson = mAllPersons.get(oldName);
+                oldPerson.copyFrom(p);
+                return true;
+            }
+            else {
+                mAllPersons.remove(oldName);
+                p.Status = SyncStatus.CACHE_NEW;
+                mAllPersons.put(p.Name, p);
+            }
         }
 
         if (storageSelect == StorageSelector.LOCAL || storageSelect == StorageSelector.ALL) {
@@ -126,7 +147,9 @@ public class PayPersonManager {
         }
 
         if (storageSelect == StorageSelector.CLOUD || storageSelect == StorageSelector.ALL) {
-            //TODO:
+            if (mCloudStorage != null) {
+                mCloudStorage.updatePayPerson(oldName, p);
+            }
         }
 
         return true;

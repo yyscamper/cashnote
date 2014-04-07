@@ -171,4 +171,11 @@
             android:layout_weight="0.25" />
 
     </LinearLayout>
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="New Button"
+        android:id="@+id/buttonSave"
+        android:layout_gravity="right" />
 </LinearLayout>

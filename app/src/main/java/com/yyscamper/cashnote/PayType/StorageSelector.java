@@ -8,7 +8,9 @@ public enum StorageSelector {
     CACHE(0x01),
     LOCAL(0x02),
     CLOUD(0x04),
+    LOCAL_CACHE(0x01 | 0x02),
     LOCAL_CLOUD(0x02 | 0x04),
+    CLOUD_CACHE(0x01 | 0x04),
     ALL(0xFFFFFFFF);
 
     private int mValue;

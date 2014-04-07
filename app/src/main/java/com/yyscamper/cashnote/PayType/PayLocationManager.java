@@ -1,5 +1,6 @@
 package com.yyscamper.cashnote.PayType;
 
+import com.yyscamper.cashnote.Storage.CloudStorage;
 import com.yyscamper.cashnote.Storage.LocalStorage;
 
 import java.util.*;
@@ -10,11 +11,13 @@ public class PayLocationManager {
     private static Hashtable<String, PayLocation> mAllLocations = new Hashtable<String, PayLocation>();
 
     private static LocalStorage mLocalStorage;
+    private static CloudStorage mCloudStorage;
     private static PayLocation[] mTopLocations = new PayLocation[3];
 
     public static void setLocalStorage(LocalStorage s) {
         mLocalStorage = s;
     }
+    public static void setCloudStorage(CloudStorage s) { mCloudStorage = s; }
 
     public static boolean add(PayLocation p, StorageSelector storageSelect) {
         if (p == null || !p.validate() || mAllLocations.containsKey(p.Name)) {
@@ -24,7 +27,6 @@ public class PayLocationManager {
         if (storageSelect == StorageSelector.CACHE || storageSelect == StorageSelector.ALL) {
             mAllLocations.put(p.Name, p);
             p.Status = SyncStatus.CACHE_NEW;
-            updateTopResult(p);
         }
 
         if (storageSelect == StorageSelector.LOCAL || storageSelect == StorageSelector.ALL) {
@@ -35,7 +37,9 @@ public class PayLocationManager {
         }
 
         if (storageSelect == StorageSelector.CLOUD || storageSelect == StorageSelector.ALL) {
-            //TODO:
+            if (mCloudStorage != null) {
+                mCloudStorage.insertPayLocation(p);
+            }
         }
         return true;
     }
@@ -68,7 +72,9 @@ public class PayLocationManager {
         }
 
         if (storageSelect == StorageSelector.CLOUD || storageSelect == StorageSelector.ALL) {
-            //TODO:
+            if (mCloudStorage != null) {
+                mCloudStorage.removePayLocation(name);
+            }
         }
         return true;
     }
@@ -83,20 +89,31 @@ public class PayLocationManager {
         }
 
         if (storageSelect == StorageSelector.CLOUD || storageSelect == StorageSelector.ALL) {
-            //TODO:
+            if (mCloudStorage != null) {
+                mCloudStorage.clearAllPayLocations();
+            }
         }
         return true;
     }
 
 
-    public static boolean update(PayLocation p, StorageSelector storageSelect) {
+    public static boolean update(String oldName, PayLocation p, StorageSelector storageSelect) {
         if (p == null || !p.validate()) {
             return false;
         }
 
         if (storageSelect == StorageSelector.CACHE || storageSelect == StorageSelector.ALL) {
-            p.Status = SyncStatus.CACHE_UPDATED;
-            //do nothing
+            p.LastModifyTime.setToNow();
+            if (oldName.equalsIgnoreCase(p.Name)) {
+                p.Status = SyncStatus.CACHE_UPDATED;
+                PayLocation oldItem = mAllLocations.get(oldName);
+                oldItem.copyFrom(p);
+            }
+            else {
+                mAllLocations.remove(oldName);
+                p.Status = SyncStatus.CACHE_NEW;
+                mAllLocations.put(p.Name, p);
+            }
         }
 
         if (storageSelect == StorageSelector.LOCAL || storageSelect == StorageSelector.ALL) {
@@ -105,7 +122,9 @@ public class PayLocationManager {
         }
 
         if (storageSelect == StorageSelector.CLOUD || storageSelect == StorageSelector.ALL) {
-            //TODO:
+            if (mCloudStorage != null) {
+                mCloudStorage.updatePayLocation(oldName, p);
+            }
         }
 
         return true;
@@ -145,31 +164,42 @@ public class PayLocationManager {
         return arr;
     }
 
+
     public static PayLocation[] getAll() {
         PayLocation[] arr = new PayLocation[mAllLocations.values().size()];
         mAllLocations.values().toArray(arr);
         return arr;
     }
 
-    public static void updateTopResult(PayLocation p) {
-        for (int i = 0; i < mTopLocations.length; i++) {
-            if (mTopLocations[i] != null) {
-                if (p.AttendCount > mTopLocations[i].AttendCount) {
-                    for (int j = mTopLocations.length - 1; j > i; j--) {
-                        mTopLocations[j] = mTopLocations[j - 1];
-                    }
-                    mTopLocations[i] = p;
-                    break;
+    public static PayLocation[] getTopLocatons() {
+        ArrayList<PayLocation> arrList = new ArrayList<PayLocation>(mAllLocations.size());
+        for (PayLocation p : mAllLocations.values()) {
+            arrList.add(p);
+        }
+        Collections.sort(arrList, new Comparator() {
+            public int compare(Object o1, Object o2) {
+                PayLocation p1 = (PayLocation)o1;
+                PayLocation p2 = (PayLocation)o2;
+                if (p1.AttendCount > p2.AttendCount) {
+                    return 1;
                 }
-            } else {
-                mTopLocations[i] = p;
+                else if (p1.AttendCount < p2.AttendCount) {
+                    return -1;
+                }
+                else {
+                    return 0;
+                }
+            }
+        });
+        PayLocation[] topResults = new PayLocation[3];
+        int j = 0;
+        for (PayLocation p : arrList) {
+            topResults[j++] = p;
+            if (j >= 3) {
                 break;
             }
         }
-    }
-
-    public static PayLocation[] getTopLocatons() {
-        return mTopLocations;
+        return topResults;
     }
 
     public static boolean contains(String name) {

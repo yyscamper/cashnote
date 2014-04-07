@@ -30,14 +30,20 @@ public class PayAttendInfo implements Parcelable {
     public void setMoney(double money) { mMoney = money; }
 
     public String toString() {
+        int iMoney = (int)mMoney;
+        if (Math.abs(mMoney - iMoney) < 0.1) {
+            return String.format("%s:%d", mName, iMoney);
+        }
+        else {
+            return String.format("%s:%.1f", mName, mMoney);
+        }
+    }
+
+    public String encode() {
         return String.format("%s:%.2f", mName, mMoney);
     }
 
-    public String toDisplayString() {
-        return toString();
-    }
-
-    public static PayAttendInfo fromString(String str) {
+    public static PayAttendInfo decode(String str) {
         if (str == null || str.length() <= 3) {
             return null;
         }
@@ -57,7 +63,6 @@ public class PayAttendInfo implements Parcelable {
     public void writeToParcel(Parcel parcel, int i) {
         parcel.writeString(mName);
         parcel.writeDouble(mMoney);
-
     }
 
     public static final Parcelable.Creator<PayAttendInfo> CREATOR = new ClassLoaderCreator<PayAttendInfo>() {
@@ -69,7 +74,7 @@ public class PayAttendInfo implements Parcelable {
 
         @Override
         public PayAttendInfo createFromParcel(Parcel parcel) {
-            return null;
+            return new PayAttendInfo(parcel);
         }
 
         @Override

@@ -2,6 +2,15 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.yyscamper.cashnote" >
 
+    <!-- Frontia框架的公共权限 -->
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.READ_PHONE_STATE" />
+    <uses-permission android:name="android.permission.ACCESS_DOWNLOAD_MANAGER" />
+    <uses-permission android:name="android.permission.DOWNLOAD_WITHOUT_NOTIFICATION" />
+
     <application
         android:allowBackup="true"
         android:icon="@drawable/ic_launcher"
@@ -25,7 +34,7 @@
             android:label="@string/title_activity_select_location" >
         </activity>
         <activity
-            android:name="com.yyscamper.cashnote.LocationListActivity"
+            android:name="com.yyscamper.cashnote.ListLocationActivity"
             android:label="@string/title_activity_location_list" >
         </activity>
         <activity
@@ -37,16 +46,25 @@
             android:label="@string/activity_location_groups" >
         </activity>
         <activity
-            android:name="com.yyscamper.cashnote.HistoryListActivity"
+            android:name="com.yyscamper.cashnote.ListHistoryActivity"
             android:label="@string/title_activity_history_list" >
         </activity>
         <activity
-            android:name="com.yyscamper.cashnote.PersonDetailActivity"
+            android:name="com.yyscamper.cashnote.DetailPersonActivity"
             android:label="@string/title_activity_person_detail" >
         </activity>
         <activity
             android:name="com.yyscamper.cashnote.AttendInfoInputActivity"
             android:label="@string/title_activity_attend_info_input" >
+        </activity>
+        <activity
+            android:name="com.yyscamper.cashnote.DetailHistoryActivity"
+            android:label="@string/title_activity_pay_history_detail" >
+        </activity>
+
+        <activity
+            android:name="com.yyscamper.cashnote.SyncActivity"
+            android:label="@string/title_activity_sync" >
         </activity>
     </application>
 

@@ -13,7 +13,7 @@ public class PayHistory {
     public String Description;
     public int Status;
     public Time LastSyncTime;
-    public Time LastLocalModifyTime;
+    public Time LastModityTime;
     public PayAttendInfo[] AttendsInfo;
     public static final int TYPE_NORMAL_AVG = 0;
     public static final int TYPE_NORMAL_NOT_AVG = 1;
@@ -31,8 +31,8 @@ public class PayHistory {
         Type = TYPE_NORMAL_AVG;
         LastSyncTime = new Time();
         LastSyncTime.set(0, 0, 0, 1, 1, 2000);
-        LastLocalModifyTime = new Time();
-        LastLocalModifyTime.setToNow();
+        LastModityTime = new Time();
+        LastModityTime.setToNow();
 	}
 
     public static PayHistory buildAvgHistory(String uuid, double totalMoney, String payName, String[] attNames, Time t, String location, String desc) {
@@ -40,6 +40,7 @@ public class PayHistory {
         if (uuid != null) {
             history.UUIDString = uuid;
         }
+        history.Money = totalMoney;
         history.Type = TYPE_NORMAL_AVG;
         history.PayerName = payName;
         history.setAttendNames(attNames);
@@ -78,6 +79,15 @@ public class PayHistory {
         AttendsInfo = atts;
     }
 
+    public String[] getAttendNames() {
+        String[] arr = new String[AttendsInfo.length];
+        int i = 0;
+        for (PayAttendInfo p : AttendsInfo) {
+            arr[i++] = p.getName();
+        }
+        return arr;
+    }
+
     public double calcMoneySum() {
         if (Type == TYPE_NORMAL_AVG) {
             return Money;
@@ -110,7 +120,7 @@ public class PayHistory {
                 &&  this.AttendsInfo != null && this.AttendsInfo.length > 0 && validateMoneySum());
     }
 
-    public String toStringOfAttends(int type) {
+    public String encodeAttends(int type) {
         StringBuffer sb = new StringBuffer();
         if (type == TYPE_NORMAL_AVG) {
             for (PayAttendInfo p : AttendsInfo) {
@@ -131,7 +141,7 @@ public class PayHistory {
         return sb.toString();
     }
 
-    public void fromStringOfAttends(String str, int type) {
+    public void decodeAttends(String str, int type) {
         String[] arrStr = str.split(",");
         if (type == TYPE_NORMAL_AVG) {
             setAttendNames(arrStr);
@@ -139,7 +149,7 @@ public class PayHistory {
         else {
             PayAttendInfo[] arr = new PayAttendInfo[arrStr.length];
             for (int i = 0; i < arr.length; i++) {
-                arr[i] = PayAttendInfo.fromString(arrStr[i]);
+                arr[i] = PayAttendInfo.decode(arrStr[i]);
             }
             AttendsInfo = arr;
         }
@@ -159,5 +169,24 @@ public class PayHistory {
             arr[i++] = PayPersonManager.get(p.getName());
         }
         return arr;
+    }
+
+    public static boolean compare(PayHistory h1, PayHistory h2) {
+       if (Math.abs(h1.Money - h2.Money) > 0.01
+             || h1.PayerName.compareTo(h2.PayerName) != 0
+             || h1.Location.compareTo(h2.Location) != 0
+             || h1.AttendsInfo.length != h2.AttendsInfo.length
+             || h1.Description.compareTo(h2.Description) != 0
+             || Time.compare(h1.PayTime, h2.PayTime) != 0) {
+           return false;
+       }
+
+       for (int i = 0; i < h1.AttendsInfo.length; i++) {
+           if (h1.AttendsInfo[i].getName().compareTo(h2.AttendsInfo[i].getName()) != 0 ||
+               Math.abs(h1.AttendsInfo[i].getMoney() - h2.AttendsInfo[i].getMoney()) > 0.01) {
+               return false;
+           }
+       }
+       return true;
     }
 }
