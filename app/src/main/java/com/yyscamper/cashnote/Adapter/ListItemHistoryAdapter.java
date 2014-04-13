@@ -73,16 +73,16 @@ public class ListItemHistoryAdapter extends BaseAdapter {
 
         PayHistory entry = mEntryList.get(position);
         TextView payDateView = (TextView) convertView.findViewById(R.id.textViewPayDate);
-        payDateView.setText(Util.formatDate(entry.PayTime));
+        payDateView.setText(Util.formatDate(entry.getPayTime()));
 
         TextView payerNameView = (TextView) convertView.findViewById(R.id.textViewPayerName);
-        payerNameView.setText(entry.PayerName);
+        payerNameView.setText(entry.getPayerName());
 
         TextView locationView = (TextView) convertView.findViewById(R.id.textViewLocation);
-        locationView.setText(entry.Location);
+        locationView.setText(entry.getLocationName());
 
         TextView moneyView = (TextView) convertView.findViewById(R.id.textViewMoney);
-        moneyView.setText(Util.formatPrettyDouble(entry.Money));
+        moneyView.setText(String.format("%.1f", entry.getMoney()));
 
         return convertView;
     }

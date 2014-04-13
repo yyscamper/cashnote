@@ -16,9 +16,11 @@ import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.SearchView;
 
+import com.yyscamper.cashnote.Enum.DataType;
+import com.yyscamper.cashnote.PayType.PayComparator;
 import com.yyscamper.cashnote.PayType.PayLocation;
-import com.yyscamper.cashnote.PayType.PayLocationManager;
 import com.yyscamper.cashnote.PayType.StorageSelector;
+import com.yyscamper.cashnote.Storage.CacheStorage;
 import com.yyscamper.cashnote.Util.Util;
 
 public class SelectLocationActivity extends Activity implements AdapterView.OnItemClickListener, SearchView.OnQueryTextListener {
@@ -35,7 +37,8 @@ public class SelectLocationActivity extends Activity implements AdapterView.OnIt
         int choiceMode = getIntent().getIntExtra("choice_mode", ListView.CHOICE_MODE_SINGLE);
         ArrayAdapter listAdapter;
         if (choiceMode == ListView.CHOICE_MODE_MULTIPLE) {
-            listAdapter = new ArrayAdapter(this, android.R.layout.simple_list_item_multiple_choice, PayLocationManager.getAllNames());
+            listAdapter = new ArrayAdapter(this, android.R.layout.simple_list_item_multiple_choice,
+                    CacheStorage.getInstance().getAllLocationNames(PayComparator.KeyAsc));
             mListLocationView.setChoiceMode(ListView.CHOICE_MODE_MULTIPLE);
             String[] preSelectedItems = getIntent().getStringArrayExtra("pre_selected_items");
             if (preSelectedItems != null) {
@@ -50,7 +53,8 @@ public class SelectLocationActivity extends Activity implements AdapterView.OnIt
         }
         else {
             mListLocationView.setChoiceMode(ListView.CHOICE_MODE_SINGLE);
-            listAdapter = new ArrayAdapter(this, android.R.layout.simple_list_item_single_choice, PayLocationManager.getAllNames());
+            listAdapter = new ArrayAdapter(this, android.R.layout.simple_list_item_single_choice,
+                    CacheStorage.getInstance().getAllLocationNames(PayComparator.KeyAsc));
         }
         mListLocationView.setAdapter(listAdapter);
         mListLocationView.setOnItemClickListener(this);
@@ -150,11 +154,11 @@ public class SelectLocationActivity extends Activity implements AdapterView.OnIt
                     Util.showErrorDialog(getApplication(), "The location name cannot be empty!", "Error");
                     return;
                 }
-                else if (PayLocationManager.contains(str)) {
+                else if (CacheStorage.getInstance().contains(DataType.LOCATION, str)) {
                     Util.showErrorDialog(getApplication(), "The location has already existed!", "Error");
                     return;
                 }
-                PayLocationManager.add(new PayLocation(str), StorageSelector.ALL);
+                StorageManager.getInstance().insert(getApplication(), new PayLocation(str));
             }
         });
         dialog.setNegativeButton(getString(R.string.txtCancle), null);

@@ -12,6 +12,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.*;
 import com.yyscamper.cashnote.PayType.*;
+import com.yyscamper.cashnote.Storage.CacheStorage;
 
 public class SelectPersonActivity extends Activity implements AdapterView.OnItemClickListener, SearchView.OnQueryTextListener {
 	ListView mListView = null;
@@ -25,12 +26,12 @@ public class SelectPersonActivity extends Activity implements AdapterView.OnItem
         int choiceMode = getIntent().getIntExtra("choice_mode", ListView.CHOICE_MODE_SINGLE);
         if (choiceMode == ListView.CHOICE_MODE_MULTIPLE) {
             mListView.setAdapter(new ArrayAdapter<String>(this, android.R.layout.simple_list_item_multiple_choice,
-                    PayPersonManager.getAllSortedNames()));
+                    CacheStorage.getInstance().getAllPersonNames(PayComparator.KeyAsc)));
             mListView.setChoiceMode(ListView.CHOICE_MODE_MULTIPLE);
         }
         else {
             mListView.setAdapter(new ArrayAdapter<String>(this, android.R.layout.simple_list_item_single_choice,
-                    PayPersonManager.getAllSortedNames()));
+                    CacheStorage.getInstance().getAllPersonNames(PayComparator.KeyAsc)));
             mListView.setChoiceMode(ListView.CHOICE_MODE_SINGLE);
         }
 

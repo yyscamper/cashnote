@@ -10,10 +10,9 @@ import android.widget.Toast;
 
 import com.yyscamper.cashnote.Fragment.FragmentPayHistoryDetail;
 import com.yyscamper.cashnote.Interface.PayHistoryDetailListener;
-import com.yyscamper.cashnote.PayType.AccountBook;
 import com.yyscamper.cashnote.PayType.PayHistory;
-import com.yyscamper.cashnote.PayType.PayHistoryManager;
 import com.yyscamper.cashnote.PayType.StorageSelector;
+import com.yyscamper.cashnote.Storage.CacheStorage;
 import com.yyscamper.cashnote.Util.Util;
 
 
@@ -37,7 +36,7 @@ public class DetailHistoryActivity extends Activity implements PayHistoryDetailL
         mMode = getIntent().getIntExtra(KEY_MODE, FragmentPayHistoryDetail.MODE_VIEW);
         if (mMode != FragmentPayHistoryDetail.MODE_NEW) {
             String uuid = getIntent().getStringExtra(KEY_UUID);
-            mHistory = PayHistoryManager.get(uuid);
+            mHistory = CacheStorage.getInstance().getHistory(uuid);
             if (mHistory == null) {
                 Util.showErrorDialog(this, "未能查找到对应的历史记录", "错误");
                 return;
@@ -67,17 +66,7 @@ public class DetailHistoryActivity extends Activity implements PayHistoryDetailL
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
                     if (mHistory != null) {
-                        if (AccountBook.removePay(mHistory.UUIDString, StorageSelector.ALL)) {
-                            Toast.makeText(getApplication(), "消除成功", Toast.LENGTH_LONG);
-                            Intent intent = new Intent();
-                            intent.putExtra(KEY_UUID, mHistory.UUIDString);
-                            intent.putExtra(KEY_OP, OP_DELETED);
-                            setResult(RESULT_OK, intent);
-                            finish();
-                        }
-                        else {
-                            Util.showErrorDialog(getApplication(), "消除失败");
-                        }
+                        StorageManager.getInstance().removePay(getApplication(), mHistory.getKey());
                     }
                 }
             };
@@ -119,7 +108,7 @@ public class DetailHistoryActivity extends Activity implements PayHistoryDetailL
                 mHistory = newHistory;
 
                 Intent intent = new Intent();
-                intent.putExtra(KEY_UUID, mHistory.UUIDString);
+                intent.putExtra(KEY_UUID, mHistory.getKey());
                 intent.putExtra(KEY_OP, OP_MODIFIED);
                 setResult(RESULT_OK, intent);
                 finish();

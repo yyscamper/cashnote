@@ -9,13 +9,16 @@ import android.text.util.Linkify;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.webkit.CacheManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import com.yyscamper.cashnote.Enum.DataType;
+import com.yyscamper.cashnote.Interface.GeneralResultCode;
 import com.yyscamper.cashnote.PayType.PayPerson;
-import com.yyscamper.cashnote.PayType.PayPersonManager;
 import com.yyscamper.cashnote.PayType.StorageSelector;
+import com.yyscamper.cashnote.Storage.CacheStorage;
 import com.yyscamper.cashnote.Util.Util;
 
 
@@ -59,7 +62,7 @@ public class DetailPersonActivity extends Activity {
                 return;
             }
             String name = getIntent().getStringExtra(KEY_NAME);
-            mPerson = PayPersonManager.get(name);
+            mPerson = CacheStorage.getInstance().getPerson(name);
             if (mPerson == null) {
                 Util.showErrorDialog(this, "没有找到对应的成员信息!", "错误");
                 this.finish();
@@ -96,12 +99,12 @@ public class DetailPersonActivity extends Activity {
         switch (mMode) {
             case MODE_EDIT:
             case MODE_VIEW:
-                mEditName.setText(mPerson.Name);
-                mEditPhone.setText(mPerson.Phone);
-                mEditEmail.setText(mPerson.Email);
-                mEditBalance.setText(Util.formatPrettyDouble(mPerson.Balance));
-                mEditPayCount.setText(String.valueOf(mPerson.PayCount));
-                mEditAttendCount.setText(String.valueOf(mPerson.AttendCount));
+                mEditName.setText(mPerson.getName());
+                mEditPhone.setText(mPerson.getPhone());
+                mEditEmail.setText(mPerson.getEmail());
+                mEditBalance.setText(Util.formatPrettyDouble(mPerson.getBalance()));
+                mEditPayCount.setText(String.valueOf(mPerson.getPayCount()));
+                mEditAttendCount.setText(String.valueOf(mPerson.getAttendCount()));
                 break;
             case MODE_NEW:
                 mEditName.setText("");
@@ -181,9 +184,11 @@ public class DetailPersonActivity extends Activity {
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
                     if (mPerson != null) {
-                        PayPersonManager.remove(mPerson.Name, StorageSelector.ALL);
-                        setResult(RESULT_OK);
-                        finish();
+                        if (GeneralResultCode.RESULT_SUCCESS ==
+                            StorageManager.getInstance().remove(getApplication(), DataType.PERSON, mPerson.getName())) {
+                            setResult(RESULT_OK);
+                            finish();
+                        }
                     }
                 }
             };
@@ -205,35 +210,39 @@ public class DetailPersonActivity extends Activity {
             return;
         }
 
-        if (mMode == MODE_NEW && PayPersonManager.contains(name)) {
+        if (mMode == MODE_NEW && CacheStorage.getInstance().contains(DataType.PERSON, name)) {
             Util.showErrorDialog(this, "你所要添加的新成员已经存在了！", "错误");
             setResult(RESULT_CANCELED);
             return;
         }
 
-        if (mMode == MODE_EDIT && !name.equalsIgnoreCase(mPerson.Name) && PayPersonManager.contains(name)) {
+        if (mMode == MODE_EDIT && !name.equalsIgnoreCase(mPerson.getName()) && CacheStorage.getInstance().contains(DataType.PERSON, name)) {
             Util.showErrorDialog(this, "你修改后的成员名称已经存在了，请换一个名称！", "错误");
             setResult(RESULT_CANCELED);
             return;
         }
 
         PayPerson person = new PayPerson(name);
-        person.Email = email;
-        person.Phone = phone;
+        person.setEmail(email);
+        person.setPhone(phone);
 
         if (mMode == MODE_NEW) {
-            person.Balance = 0.0;
-            person.AttendCount = 0;
-            person.PayCount = 0;
-            PayPersonManager.add(person, StorageSelector.ALL);
-            Toast.makeText(this, "新建成员成功", Toast.LENGTH_LONG);
+            person.setBalance(0.0);
+            person.setAttendCount(0);
+            person.setPayCount(0);
+            if (GeneralResultCode.RESULT_SUCCESS ==
+                StorageManager.getInstance().insert(this, person)) {
+                Toast.makeText(this, "新建成员成功", Toast.LENGTH_LONG);
+            }
         }
         else {
-            person.Balance = mPerson.Balance;
-            person.AttendCount = mPerson.AttendCount;
-            person.PayCount = mPerson.PayCount;
-            PayPersonManager.update(mPerson.Name, person, StorageSelector.ALL);
-            Toast.makeText(this, "修改成员成功", Toast.LENGTH_LONG);
+            person.setBalance(mPerson.getBalance());
+            person.setAttendCount(mPerson.getAttendCount());
+            person.setPayCount(mPerson.getPayCount());
+            if (GeneralResultCode.RESULT_SUCCESS ==
+                StorageManager.getInstance().update(this, mPerson.getName(), person)) {
+                Toast.makeText(this, "修改成员成功", Toast.LENGTH_LONG);
+            }
         }
         setResult(RESULT_OK);
         this.finish();

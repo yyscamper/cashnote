@@ -11,12 +11,12 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
 
+import com.yyscamper.cashnote.Enum.DataType;
 import com.yyscamper.cashnote.LocationGroupActivity;
 import com.yyscamper.cashnote.PayType.LocationGroup;
-import com.yyscamper.cashnote.PayType.LocationGroupManager;
 import com.yyscamper.cashnote.PayType.PayLocation;
-import com.yyscamper.cashnote.PayType.PayLocationManager;
 import com.yyscamper.cashnote.R;
+import com.yyscamper.cashnote.Storage.CacheStorage;
 import com.yyscamper.cashnote.Util.ValuePair;
 
 import java.util.ArrayList;
@@ -57,10 +57,10 @@ public class FragmentWhereDinner extends Fragment implements View.OnClickListene
 
     private void updateGroupNameHeader() {
         if (mCurrLocationGroup == null) {
-            mViewGroupName.setText("全部餐馆 (" + PayLocationManager.size() + ")");
+            mViewGroupName.setText("全部餐馆 (" + CacheStorage.getInstance().getManager(DataType.LOCATION).size() + ")");
         }
         else {
-            mViewGroupName.setText(mCurrLocationGroup.Name + " (" + mCurrLocationGroup.getChildrenCount() + ")");
+            mViewGroupName.setText(mCurrLocationGroup.getName() + " (" + mCurrLocationGroup.getChildrenCount() + ")");
         }
     }
 
@@ -71,7 +71,7 @@ public class FragmentWhereDinner extends Fragment implements View.OnClickListene
                 return;
             }
             String groupName = data.getStringExtra("selected_item");
-            mCurrLocationGroup = LocationGroupManager.get(groupName);
+            mCurrLocationGroup = CacheStorage.getInstance().getLocationGroup(groupName);
             updateGroupNameHeader();
         }
         else {
@@ -89,7 +89,7 @@ public class FragmentWhereDinner extends Fragment implements View.OnClickListene
         ArrayList<ValuePair> list = new ArrayList<ValuePair>();
         for (PayLocation loc : locs) {
             if (loc != null) {
-                list.add(new ValuePair(loc.Name, loc.AttendCount));
+                list.add(new ValuePair(loc.getName(), loc.getAttendCount()));
             }
         }
         ValuePair[] arr = new ValuePair[list.size()];
@@ -143,7 +143,7 @@ public class FragmentWhereDinner extends Fragment implements View.OnClickListene
                 mBackgroundTask.execute(mCurrLocationGroup.getChildrenArray());
             }
             else {
-                mBackgroundTask.execute(PayLocationManager.getAllNames());
+                mBackgroundTask.execute(CacheStorage.getInstance().getAllLocationNames(null));
             }
         }
     }

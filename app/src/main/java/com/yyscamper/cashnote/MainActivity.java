@@ -1,6 +1,5 @@
 package com.yyscamper.cashnote;
 
-import java.util.ArrayList;
 import java.util.Locale;
 
 import android.app.Activity;
@@ -8,21 +7,22 @@ import android.app.ActionBar;
 import android.app.Fragment;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
+import android.app.ProgressDialog;
 import android.content.Intent;
+import android.os.Looper;
 import android.support.v13.app.FragmentPagerAdapter;
 import android.os.Bundle;
 import android.support.v4.view.ViewPager;
 import android.view.Menu;
 import android.view.MenuItem;
 
+import com.baidu.frontia.FrontiaAccount;
 import com.baidu.frontia.FrontiaApplication;
 import com.yyscamper.cashnote.Fragment.FragmentDashboard;
 import com.yyscamper.cashnote.Fragment.FragmentPayHistoryDetail;
 import com.yyscamper.cashnote.Fragment.FragmentWhereDinner;
-import com.yyscamper.cashnote.PayType.*;
 import com.yyscamper.cashnote.Storage.CloudStorage;
-import com.yyscamper.cashnote.Storage.LocalStorage;
-import com.yyscamper.cashnote.Storage.SyncManager;
+import com.yyscamper.cashnote.Storage.SqliteStorage;
 import com.yyscamper.cashnote.Util.Util;
 
 public class MainActivity extends Activity implements ActionBar.TabListener {
@@ -36,7 +36,7 @@ public class MainActivity extends Activity implements ActionBar.TabListener {
      * {@link android.support.v13.app.FragmentStatePagerAdapter}.
      */
     SectionsPagerAdapter mSectionsPagerAdapter;
-    LocalStorage mLocalStorage;
+    SqliteStorage mSqliteStorage;
     CloudStorage mCloudStorage;
     String mDatabaseName = "cashnote_test";
 
@@ -45,24 +45,10 @@ public class MainActivity extends Activity implements ActionBar.TabListener {
      */
     ViewPager mViewPager;
 
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
+    private FrontiaAccount mUser;
 
-        FrontiaApplication.
-                initFrontiaApplication(getApplicationContext());
-
+    private void handleCreate() {
         setContentView(R.layout.activity_main);
-
-        mLocalStorage = new LocalStorage(getApplicationContext(), mDatabaseName);
-        AccountBook.setLocalStorage(mLocalStorage);
-
-        mCloudStorage = new CloudStorage(getApplicationContext(), mDatabaseName);
-        if (!mCloudStorage.init()) {
-            Util.showErrorDialog(this, "初始化云端数据库失败！");
-            mCloudStorage = null;
-        }
-        AccountBook.setCloudStorage(mCloudStorage);
 
         // Set up the action bar.
         final ActionBar actionBar = getActionBar();
@@ -98,13 +84,25 @@ public class MainActivity extends Activity implements ActionBar.TabListener {
                             .setTabListener(this));
         }
 
-        AccountBook.init();
+        StorageManager.getInstance().init(this);
+    }
+
+    private void handleAuthor() {
+        final String TAG = "BaidACL";
+        FrontiaApplication.
+                initFrontiaApplication(getApplicationContext());
+
+        handleCreate();
+    }
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        handleAuthor();
     }
 
     @Override
     protected void onDestroy() {
-        if (mLocalStorage != null)
-            mLocalStorage.closeDB();
+        StorageManager.getInstance().close();
         super.onDestroy();
     }
 
@@ -143,17 +141,30 @@ public class MainActivity extends Activity implements ActionBar.TabListener {
             return true;
         }
         else if (id == R.id.action_debug_clear_db) {
-            AccountBook.debug_clear_db();
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    StorageManager.getInstance().debug_clear_all(MainActivity.this);
+                }
+            }).start();
+            StorageManager.getInstance().debug_clear_all(this);
             return true;
         }
         else if (id == R.id.action_debug_init_db) {
-            AccountBook.debug_init_db();
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    Looper.prepare();
+                    final ProgressDialog progressDialog = ProgressDialog.show(MainActivity.this,
+                            "", "Selecting Radio Station", true);
+                    StorageManager.getInstance().debug_insert(MainActivity.this);
+                    progressDialog.dismiss();
+                }
+            }).start();
             return true;
         }
         else if (id == R.id.action_sync) {
-            if (mCloudStorage != null) {
-                SyncManager.syncAll();
-            }
+            StorageManager.getInstance().loadAllFromCloud(this);
         }
         return super.onOptionsItemSelected(item);
     }

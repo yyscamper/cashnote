@@ -37,4 +37,16 @@ public enum StorageSelector {
             return NONE;
         }
     }
+
+    public boolean hasCache() {
+        return ((mValue & CACHE.mValue) != 0);
+    }
+
+    public boolean hasLocal() {
+        return ((mValue & LOCAL.mValue) != 0);
+    }
+
+    public boolean hasCloud() {
+        return ((mValue & CLOUD.mValue) != 0);
+    }
 }

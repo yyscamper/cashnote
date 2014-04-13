@@ -18,8 +18,9 @@ import android.widget.TextView;
 
 import com.yyscamper.cashnote.Adapter.DoubleColumnRowAdapter;
 import com.yyscamper.cashnote.PayType.PayAttendInfo;
+import com.yyscamper.cashnote.PayType.PayComparator;
 import com.yyscamper.cashnote.PayType.PayPerson;
-import com.yyscamper.cashnote.PayType.PayPersonManager;
+import com.yyscamper.cashnote.Storage.CacheStorage;
 import com.yyscamper.cashnote.Util.Util;
 import com.yyscamper.cashnote.Util.ValuePair;
 
@@ -43,7 +44,7 @@ public class AttendInfoInputActivity extends Activity implements AdapterView.OnI
         mListView = (ListView)findViewById(R.id.listView);
         mResultTable = new Hashtable<String, Double>();
 
-        PayPerson[] allPersons = PayPersonManager.getAllPersons(PayPersonManager.SORT_NAME_ASCENDING);
+        PayPerson[] allPersons = CacheStorage.getInstance().getAllPersons(PayComparator.KeyAsc);
         ValuePair[] vpArr = new ValuePair[allPersons.length];
         PayAttendInfo[] preAtts = null;
         if (getIntent().hasExtra(KEY_PRE_SELECTED_ITEMS)) {
@@ -56,12 +57,12 @@ public class AttendInfoInputActivity extends Activity implements AdapterView.OnI
         }
 
         for (int i = 0; i < allPersons.length; i++) {
-            if (mResultTable.containsKey(allPersons[i].Name)) {
-                double money = mResultTable.get(allPersons[i].Name).doubleValue();
-                vpArr[i] = new ValuePair(allPersons[i].Name, new Double(money));
+            if (mResultTable.containsKey(allPersons[i].getName())) {
+                double money = mResultTable.get(allPersons[i].getName()).doubleValue();
+                vpArr[i] = new ValuePair(allPersons[i].getName(), new Double(money));
             }
             else {
-                vpArr[i] = new ValuePair(allPersons[i].Name, new Double(0.0));
+                vpArr[i] = new ValuePair(allPersons[i].getName(), new Double(0.0));
             }
         }
 

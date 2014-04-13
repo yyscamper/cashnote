@@ -6,8 +6,12 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.TextView;
+
+import com.yyscamper.cashnote.Enum.DataType;
 import com.yyscamper.cashnote.PayType.*;
 import com.yyscamper.cashnote.R;
+import com.yyscamper.cashnote.Storage.CacheStorage;
+import com.yyscamper.cashnote.Storage.StorageObject;
 import com.yyscamper.cashnote.Util.Util;
 
 /**
@@ -22,7 +26,7 @@ public class ListItemLocationAdapter extends BaseAdapter {
     public ListItemLocationAdapter(Context ctx)
     {
         this.mContext = ctx;
-        this.mAllLocatoins = PayLocationManager.getAll();
+        this.mAllLocatoins = CacheStorage.getInstance().getAllLocations(null);
         this.mSortType = 0;
         mInflater = LayoutInflater.from(ctx);
     }
@@ -70,15 +74,15 @@ public class ListItemLocationAdapter extends BaseAdapter {
         TextView viewAttendCount = (TextView) convertView.findViewById(R.id.textViewAttendCount);
         TextView viewLastAttendTime = (TextView) convertView.findViewById(R.id.textViewLastAttendTime);
 
-        viewName.setText(location.Name);
-        viewAttendCount.setText(String.valueOf(location.AttendCount));
-        viewLastAttendTime.setText("上次:" + Util.formatDate(location.LastAttendTime));
+        viewName.setText(location.getName());
+        viewAttendCount.setText(String.valueOf(location.getAttendCount()));
+        viewLastAttendTime.setText("上次:" + Util.formatDate(location.getLastAttendTime()));
 
         return convertView;
     }
 
     public void refreshData() {
-        this.mAllLocatoins = PayLocationManager.getAll();
+        this.mAllLocatoins = CacheStorage.getInstance().getAllLocations(null);
         notifyDataSetChanged();
     }
 }

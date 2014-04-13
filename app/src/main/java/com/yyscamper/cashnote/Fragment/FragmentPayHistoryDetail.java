@@ -15,11 +15,13 @@ import android.content.Intent;
 import android.text.format.*;
 
 import com.yyscamper.cashnote.AttendInfoInputActivity;
+import com.yyscamper.cashnote.Interface.GeneralResultCode;
 import com.yyscamper.cashnote.Interface.PayHistoryDetailListener;
 import com.yyscamper.cashnote.PayType.*;
 import com.yyscamper.cashnote.R;
 import com.yyscamper.cashnote.SelectLocationActivity;
 import com.yyscamper.cashnote.SelectPersonActivity;
+import com.yyscamper.cashnote.StorageManager;
 import com.yyscamper.cashnote.Util.Util;
 
 import java.util.Calendar;
@@ -115,16 +117,16 @@ public class FragmentPayHistoryDetail extends Fragment {
         switch (mMode) {
             case MODE_VIEW:
             case MODE_EDIT:
-                mRadioButtonAvg.setChecked(mCurrPayEntry.Type == PayHistory.TYPE_NORMAL_AVG);
-                mRadioButtonNotAvg.setChecked(mCurrPayEntry.Type != PayHistory.TYPE_NORMAL_AVG);
-                mViewInputMoney.setText(Util.formatPrettyDouble(mCurrPayEntry.Money));
-                mViewSelectPayer.setText(mCurrPayEntry.PayerName);
+                mRadioButtonAvg.setChecked(mCurrPayEntry.getPayType() == PayHistory.PAY_TYPE_NORMAL_AVG);
+                mRadioButtonNotAvg.setChecked(mCurrPayEntry.getPayType() != PayHistory.PAY_TYPE_NORMAL_AVG);
+                mViewInputMoney.setText(Util.formatPrettyDouble(mCurrPayEntry.getMoney()));
+                mViewSelectPayer.setText(mCurrPayEntry.getPayerName());
                 mSelectedAttend = mCurrPayEntry.getAttendNames();
                 mPayAttends = mCurrPayEntry.getAttendsInfo();
-                mCurrTime = mCurrPayEntry.PayTime;
+                mCurrTime = mCurrPayEntry.getPayTime();
                 mViewSelectTime.setText(Util.formatDate(mCurrTime));
-                mViewSelectLocation.setText(mCurrPayEntry.Location);
-                mViewDescription.setText(mCurrPayEntry.Description);
+                mViewSelectLocation.setText(mCurrPayEntry.getLocationName());
+                mViewDescription.setText(mCurrPayEntry.getDescription());
                 if (mMode == MODE_EDIT) {
                     mViewSave.setText("保存修改");
                 }
@@ -310,11 +312,12 @@ public class FragmentPayHistoryDetail extends Fragment {
         }
 
         if (mMode == MODE_EDIT) {
-            entry.UUIDString = mCurrPayEntry.UUIDString;
-            AccountBook.removePay(entry.UUIDString, StorageSelector.ALL);
+            entry.setKey(mCurrPayEntry.getKey());
+            StorageManager.getInstance().removePay(getActivity(), entry.getKey());
         }
 
-        if (!AccountBook.addPay(entry, StorageSelector.ALL)) {
+        if (GeneralResultCode.RESULT_SUCCESS !=
+                StorageManager.getInstance().insertPay(getActivity(), entry)) {
             showAlertDialog("添加到消费记录时出错！", "Error");
             return null;
         }

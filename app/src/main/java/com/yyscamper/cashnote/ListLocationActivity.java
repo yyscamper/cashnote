@@ -13,9 +13,12 @@ import android.widget.EditText;
 import android.widget.ListView;
 
 import com.yyscamper.cashnote.Adapter.ListItemLocationAdapter;
+import com.yyscamper.cashnote.Enum.DataType;
+import com.yyscamper.cashnote.Interface.GeneralResultCode;
 import com.yyscamper.cashnote.PayType.PayLocation;
-import com.yyscamper.cashnote.PayType.PayLocationManager;
 import com.yyscamper.cashnote.PayType.StorageSelector;
+import com.yyscamper.cashnote.Storage.CacheStorage;
+import com.yyscamper.cashnote.Storage.StorageConst;
 import com.yyscamper.cashnote.Util.Util;
 
 
@@ -79,11 +82,11 @@ public class ListLocationActivity extends Activity {
                     Util.showErrorDialog(ListLocationActivity.this, "地点不能为空!");
                     return;
                 }
-                else if (PayLocationManager.contains(str)) {
+                else if (CacheStorage.getInstance().contains(DataType.LOCATION, str)) {
                     Util.showErrorDialog(ListLocationActivity.this, "你输入的地点已经存在，请重新输入");
                     return;
                 }
-                PayLocationManager.add(new PayLocation(str), StorageSelector.ALL);
+                StorageManager.getInstance().insert(getApplication(), new PayLocation(str));
                 mAdapter.refreshData();
             }
         });
@@ -95,7 +98,7 @@ public class ListLocationActivity extends Activity {
         AlertDialog.Builder dialog = new AlertDialog.Builder(this);
         dialog.setTitle(getString(R.string.add_location));
         final EditText input = new EditText(this);
-        input.setText(mSelectedLocation.Name);
+        input.setText(mSelectedLocation.getName());
         dialog.setView(input);
 
         dialog.setPositiveButton(getString(R.string.txtOK), new DialogInterface.OnClickListener() {
@@ -106,15 +109,18 @@ public class ListLocationActivity extends Activity {
                     Util.showErrorDialog(ListLocationActivity.this, "地点不能为空!");
                     return;
                 }
-                else if (!str.equalsIgnoreCase(mSelectedLocation.Name) && PayLocationManager.contains(str)) {
+                else if (!str.equalsIgnoreCase(mSelectedLocation.getName()) &&
+                    CacheStorage.getInstance().contains(DataType.LOCATION, str)) {
                     Util.showErrorDialog(ListLocationActivity.this, "你输入的地点已经存在，请重新输入");
                     return;
                 }
                 PayLocation newLoc = new PayLocation();
                 newLoc.copyFrom(mSelectedLocation);
-                newLoc.Name= str;
-                PayLocationManager.update(mSelectedLocation.Name, newLoc, StorageSelector.ALL);
-                mAdapter.refreshData();
+                newLoc.setName(str);
+                if (GeneralResultCode.RESULT_SUCCESS ==
+                        StorageManager.getInstance().update(getApplication(), mSelectedLocation.getName(), newLoc)) {
+                    mAdapter.refreshData();
+                }
             }
         });
         dialog.setNegativeButton(getString(R.string.txtCancle), null);
@@ -127,13 +133,14 @@ public class ListLocationActivity extends Activity {
             return;
         }
         AlertDialog.Builder dialog = new AlertDialog.Builder(this);
-        dialog.setTitle(mSelectedLocation.Name);
+        dialog.setTitle(mSelectedLocation.getName());
         dialog.setMessage("你确定要删除该地点吗？");
 
         dialog.setPositiveButton(getString(R.string.txtOK), new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                if (PayLocationManager.remove(mSelectedLocation.Name, StorageSelector.ALL)) {
+                if (GeneralResultCode.RESULT_SUCCESS ==
+                        StorageManager.getInstance().remove(getApplication(), DataType.LOCATION, mSelectedLocation.getName())) {
                     ((ListItemLocationAdapter)(mViewLocations.getAdapter())).refreshData();
                 }
             }
@@ -147,7 +154,7 @@ public class ListLocationActivity extends Activity {
         super.onCreateContextMenu(menu, v, menuInfo);
         if (v == mViewLocations)
         {
-            menu.setHeaderTitle(mSelectedLocation.Name);
+            menu.setHeaderTitle(mSelectedLocation.getName());
             menu.add(0, 1, Menu.NONE, "编辑");
             menu.add(0, 2, Menu.NONE, "删除");
         }

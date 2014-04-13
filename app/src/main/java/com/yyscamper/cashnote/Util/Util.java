@@ -3,18 +3,16 @@ package com.yyscamper.cashnote.Util;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
-import android.graphics.Paint;
-import android.text.TextUtils;
 import android.text.format.Time;
-import android.widget.TextView;
 
-import com.yyscamper.cashnote.Adapter.ListItemLocationAdapter;
+import com.yyscamper.cashnote.Enum.DataType;
+import com.yyscamper.cashnote.PayType.LocationGroup;
 import com.yyscamper.cashnote.PayType.PayAttendInfo;
-import com.yyscamper.cashnote.PayType.PayLocationManager;
-import com.yyscamper.cashnote.PayType.StorageSelector;
-import com.yyscamper.cashnote.R;
+import com.yyscamper.cashnote.PayType.PayHistory;
+import com.yyscamper.cashnote.PayType.PayLocation;
+import com.yyscamper.cashnote.PayType.PayPerson;
+import com.yyscamper.cashnote.Storage.StorageObject;
 
-import java.util.ArrayList;
 import java.util.Calendar;
 
 /**
@@ -114,5 +112,28 @@ public class Util {
         else {
             return String.format("%.1f", val);
         }
+    }
+
+    public static String DataTypeToString(DataType dataType) {
+        return dataType.toString();
+    }
+
+    public static StorageObject createByType(DataType type) {
+        switch (type) {
+            case HISTORY:
+                return new PayHistory();
+            case LOCATION_GROUP:
+                return new LocationGroup();
+            case LOCATION:
+                return new PayLocation();
+            case PERSON:
+                return new PayPerson();
+            default:
+                return null;
+        }
+    }
+
+    public static boolean isZero(double val) {
+        return (Math.abs(val) <= 0.01);
     }
 }

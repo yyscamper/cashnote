@@ -17,10 +17,14 @@ import android.widget.ListView;
 
 import com.yyscamper.cashnote.Adapter.ListItemPersonAdapter;
 import com.yyscamper.cashnote.DetailPersonActivity;
+import com.yyscamper.cashnote.Enum.DataType;
+import com.yyscamper.cashnote.Interface.GeneralResultCode;
+import com.yyscamper.cashnote.PayType.PayComparator;
 import com.yyscamper.cashnote.PayType.PayPerson;
-import com.yyscamper.cashnote.PayType.PayPersonManager;
 import com.yyscamper.cashnote.PayType.StorageSelector;
 import com.yyscamper.cashnote.R;
+import com.yyscamper.cashnote.Storage.CacheStorage;
+import com.yyscamper.cashnote.StorageManager;
 
 /**
  * A placeholder fragment containing a simple view.
@@ -31,7 +35,6 @@ public class FragmentPersons extends Fragment {
      * fragment.
      */
     private ListView mViewPersonList;
-    private int mSortType = PayPersonManager.SORT_NAME_ASCENDING;
     private int mSelectedPosition;
     private ListItemPersonAdapter mAdapter;
     private static final int REQ_CODE_PERSON_DETAIL = 10;
@@ -53,7 +56,7 @@ public class FragmentPersons extends Fragment {
         if (mViewPersonList == null)
             return;
 
-        mAdapter = new ListItemPersonAdapter(this.getActivity(), PayPersonManager.getAllPersons(mSortType), mSortType);
+        mAdapter = new ListItemPersonAdapter(this.getActivity(), CacheStorage.getInstance().getAllPersons(PayComparator.KeyAsc));
         mViewPersonList.setAdapter(mAdapter);
     }
 
@@ -78,7 +81,7 @@ public class FragmentPersons extends Fragment {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 PayPerson person = (PayPerson)mAdapter.getItem(position);
-                startPersonDetailByMode(DetailPersonActivity.MODE_VIEW, person.Name);
+                startPersonDetailByMode(DetailPersonActivity.MODE_VIEW, person.getName());
             }
         });
         refreshData();
@@ -95,7 +98,7 @@ public class FragmentPersons extends Fragment {
         {
             PayPerson person = getSelectedPerson();
             if (person != null) {
-                menu.setHeaderTitle("成员(" + person.Name + ")");
+                menu.setHeaderTitle("成员(" + person.getName() + ")");
                 menu.add(0, 1, Menu.NONE, "删除");
             }
         }
@@ -108,7 +111,7 @@ public class FragmentPersons extends Fragment {
         }
 
         final PayPerson selectedItem = (PayPerson)mViewPersonList.getAdapter().getItem(mSelectedPosition);
-        String message = String.format(getString(R.string.remove_person_message), selectedItem.Name);
+        String message = String.format(getString(R.string.remove_person_message), selectedItem.getName());
         final AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
         builder.setMessage(message);
         builder.setTitle(R.string.remove_person);
@@ -118,8 +121,10 @@ public class FragmentPersons extends Fragment {
             public void onClick(DialogInterface dialog, int which)
             {
                 getActivity().setResult(getActivity().RESULT_OK);
-                PayPersonManager.remove(selectedItem.Name, StorageSelector.ALL);
-                refreshData();
+                if (GeneralResultCode.RESULT_SUCCESS ==
+                        StorageManager.getInstance().remove(getActivity(), DataType.PERSON, selectedItem.getName())) {
+                    refreshData();
+                }
             }
         });
 

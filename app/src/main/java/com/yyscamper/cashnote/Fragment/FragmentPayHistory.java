@@ -19,8 +19,9 @@ import com.yyscamper.cashnote.Adapter.ListItemHistoryAdapter;
 import com.yyscamper.cashnote.DetailHistoryActivity;
 import com.yyscamper.cashnote.PayType.*;
 
-import com.yyscamper.cashnote.PayType.PayHistoryManager;
 import com.yyscamper.cashnote.R;
+import com.yyscamper.cashnote.Storage.CacheStorage;
+import com.yyscamper.cashnote.StorageManager;
 
 /**
  * A placeholder fragment containing a simple view.
@@ -31,6 +32,8 @@ public class FragmentPayHistory extends Fragment {
      * fragment.
      */
     private static final int REQ_CODE_HISTORY_DETAIL = 1;
+    private static final int REQ_CODE_REMOVE_HISTORY = 2;
+
     private static final String ARG_SECTION_NUMBER = "section_number";
     private static FragmentPayHistory mInstance;
     private ListView mViewHistoryList;
@@ -54,7 +57,7 @@ public class FragmentPayHistory extends Fragment {
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == REQ_CODE_HISTORY_DETAIL) {
             if (resultCode == Activity.RESULT_OK) {
-                mAdapter = new ListItemHistoryAdapter(getActivity(), PayHistoryManager.getAllInList());
+                mAdapter = new ListItemHistoryAdapter(getActivity(), CacheStorage.getInstance().getAllHistoriesInList(PayComparator.HistoryPayTimeDesc));
                 mViewHistoryList.setAdapter(mAdapter);
             }
         }
@@ -72,7 +75,7 @@ public class FragmentPayHistory extends Fragment {
     private void refreshData() {
         if (mViewHistoryList == null)
             return;
-        mAdapter = new ListItemHistoryAdapter(getActivity(), PayHistoryManager.getAllInList());
+        mAdapter = new ListItemHistoryAdapter(getActivity(), CacheStorage.getInstance().getAllHistoriesInList(PayComparator.HistoryPayTimeDesc));
         mViewHistoryList.setAdapter(mAdapter);
     }
 
@@ -96,7 +99,7 @@ public class FragmentPayHistory extends Fragment {
                 PayHistory entry = (PayHistory)mAdapter.getItem(position);
                 Intent intent = new Intent(getActivity(), DetailHistoryActivity.class);
                 intent.putExtra(DetailHistoryActivity.KEY_MODE, FragmentPayHistoryDetail.MODE_VIEW);
-                intent.putExtra(DetailHistoryActivity.KEY_UUID, entry.UUIDString);
+                intent.putExtra(DetailHistoryActivity.KEY_UUID, entry.getKey());
                 startActivityForResult(intent, REQ_CODE_HISTORY_DETAIL);
             }
         });
@@ -137,7 +140,7 @@ public class FragmentPayHistory extends Fragment {
                 }
                 else
                 {
-                    AccountBook.removePay(history.UUIDString, StorageSelector.ALL);
+                    StorageManager.getInstance().removePay(getActivity(), history.getKey());
                     refreshData();
                 }
 

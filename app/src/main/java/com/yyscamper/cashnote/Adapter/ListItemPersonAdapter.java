@@ -8,7 +8,10 @@ import android.widget.BaseAdapter;
 import android.widget.TextView;
 import com.yyscamper.cashnote.PayType.*;
 import com.yyscamper.cashnote.R;
+import com.yyscamper.cashnote.Storage.StorageObject;
 import com.yyscamper.cashnote.Util.Util;
+
+import java.util.Comparator;
 
 /**
  * Created by YuanYu on 14-3-16.
@@ -17,13 +20,11 @@ public class ListItemPersonAdapter extends BaseAdapter {
     private Context mContext;
     private PayPerson[] mPersonArray;
     private LayoutInflater mInflater;
-    private int mSortType = PayPersonManager.SORT_MONEY_ASCENDING;
 
-    public ListItemPersonAdapter(Context ctx, PayPerson[] perArr, int sortType)
+    public ListItemPersonAdapter(Context ctx, PayPerson[] perArr)
     {
         this.mContext = ctx;
         this.mPersonArray = perArr;
-        this.mSortType = sortType;
         mInflater = LayoutInflater.from(ctx);
     }
 
@@ -64,7 +65,7 @@ public class ListItemPersonAdapter extends BaseAdapter {
             convertView = mInflater.inflate(R.layout.list_item_person, null);
         }
 
-        PayPerson person = mPersonArray[position];
+        PayPerson person = (PayPerson)mPersonArray[position];
 
 
         TextView personNameView = (TextView) convertView.findViewById(R.id.textViewName);
@@ -72,10 +73,10 @@ public class ListItemPersonAdapter extends BaseAdapter {
         TextView personPayCountView = (TextView) convertView.findViewById(R.id.textViewPayCount);
         TextView personAttendCountView = (TextView) convertView.findViewById(R.id.textViewAttendCount);
 
-        personNameView.setText(person.Name);
-        personBalanceView.setText(Util.formatPrettyDouble(person.Balance));
-        personPayCountView.setText("付款:" + String.valueOf(person.PayCount));
-        personAttendCountView.setText("出席:" + String.valueOf(person.AttendCount));
+        personNameView.setText(person.getName());
+        personBalanceView.setText(Util.formatPrettyDouble(person.getBalance()));
+        personPayCountView.setText("付款:" + String.valueOf(person.getPayCount()));
+        personAttendCountView.setText("出席:" + String.valueOf(person.getAttendCount()));
 
         return convertView;
     }

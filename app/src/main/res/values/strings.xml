@@ -36,5 +36,5 @@
     <string name="title_activity_attend_info_input">选择成员与分账</string>
     <string name="title_activity_pay_history_detail">消费历史</string>
     <string name="title_activity_sync">SyncActivity</string>
-
+    <string name="title_activity_storage_manager">存储管理器</string>
 </resources>

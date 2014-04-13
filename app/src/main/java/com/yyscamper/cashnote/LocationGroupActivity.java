@@ -14,12 +14,16 @@ import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.ListView;
 
+import com.yyscamper.cashnote.Enum.DataType;
+import com.yyscamper.cashnote.Interface.GeneralResultCode;
 import com.yyscamper.cashnote.PayType.LocationGroup;
-import com.yyscamper.cashnote.PayType.LocationGroupManager;
+import com.yyscamper.cashnote.PayType.PayComparator;
 import com.yyscamper.cashnote.PayType.StorageSelector;
+import com.yyscamper.cashnote.Storage.CacheStorage;
 import com.yyscamper.cashnote.Util.Util;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.Hashtable;
 
 
@@ -89,7 +93,8 @@ public class LocationGroupActivity extends Activity {
     }
 
     private void updateGroupData() {
-        ArrayAdapter<String> groupAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_single_choice, LocationGroupManager.getGroupNames());
+        ArrayAdapter<String> groupAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_single_choice,
+                CacheStorage.getInstance().getAllLocationGroupNames(PayComparator.KeyAsc));
         mListViewGroupNames.setAdapter(groupAdapter);
     }
 
@@ -120,7 +125,7 @@ public class LocationGroupActivity extends Activity {
     }
 
     private LocationGroup getGroup(int positon) {
-        return LocationGroupManager.get(getGroupName(positon));
+        return CacheStorage.getInstance().getLocationGroup(getGroupName(positon));
     }
 
     private String getCurrChildName() {
@@ -140,7 +145,7 @@ public class LocationGroupActivity extends Activity {
             adapter = mChildrenAdapterTable.get(groupName);
         }
         else {
-            LocationGroup group = LocationGroupManager.get(groupName);
+            LocationGroup group = CacheStorage.getInstance().getLocationGroup(groupName);
             String[] childrenName = group.getChildrenArray();
             adapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, childrenName);
             mChildrenAdapterTable.put(groupName, adapter);
@@ -231,13 +236,15 @@ public class LocationGroupActivity extends Activity {
                         Util.showErrorDialog(getApplication(), "分组的名称不能为空！", "错误");
                         return;
                     }
-                    else if (LocationGroupManager.contains(str)) {
+                    else if (CacheStorage.getInstance().contains(DataType.LOCATION_GROUP, str)) {
                         Util.showErrorDialog(getApplication(), "该分组名称已经存在了，请重新输入!", "错误");
                         return;
                     }
-                    LocationGroupManager.add(new LocationGroup(str), StorageSelector.ALL);
-                    updateGroupData();
-                    selectGroup(str);
+                    if (GeneralResultCode.RESULT_SUCCESS ==
+                            StorageManager.getInstance().insert(getApplication(), new LocationGroup(str))) {
+                        updateGroupData();
+                        selectGroup(str);
+                    }
                 }
         });
         dialog.setNegativeButton(getString(R.string.txtCancle), null);
@@ -256,14 +263,15 @@ public class LocationGroupActivity extends Activity {
         dialog.setPositiveButton(getString(R.string.txtOK), new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                LocationGroupManager.remove(groupName, StorageSelector.ALL);
-                updateGroupData();
-                //select the next group
-                if (mCurrGroupPosition >= mListViewGroupNames.getCount()-1) {
-                    selectGroup(0);
-                }
-                else {
-                    selectGroup(mCurrGroupPosition + 1);
+                if (GeneralResultCode.RESULT_SUCCESS ==
+                StorageManager.getInstance().remove(getApplication(), DataType.LOCATION_GROUP, groupName)) {
+                    updateGroupData();
+                    //select the next group
+                    if (mCurrGroupPosition >= mListViewGroupNames.getCount() - 1) {
+                        selectGroup(0);
+                    } else {
+                        selectGroup(mCurrGroupPosition + 1);
+                    }
                 }
             }
         });
@@ -286,7 +294,7 @@ public class LocationGroupActivity extends Activity {
                     Util.showErrorDialog(getApplication(), "分组的名称不能为空！", "错误");
                     return;
                 }
-                else if (LocationGroupManager.contains(str)) {
+                else if (CacheStorage.getInstance().contains(DataType.LOCATION_GROUP, str)) {
                     Util.showErrorDialog(getApplication(), "该分组名称已经存在了，请重新输入!", "错误");
                     return;
                 }
@@ -295,9 +303,11 @@ public class LocationGroupActivity extends Activity {
                 for (String name : selChildren) {
                     cloneGroup.add(new String(name));
                 }
-                LocationGroupManager.add(cloneGroup, StorageSelector.ALL);
-                updateGroupData();
-                selectGroup(str);
+                if (GeneralResultCode.RESULT_SUCCESS ==
+                        StorageManager.getInstance().insert(getApplication(), cloneGroup)) {
+                    updateGroupData();
+                    selectGroup(str);
+                }
             }
         });
         dialog.setNegativeButton(getString(R.string.txtCancle), null);
@@ -313,15 +323,15 @@ public class LocationGroupActivity extends Activity {
         final LocationGroup locGroup = getGroup(mCurrGroupPosition);
         final String childName = getCurrChildName();
         dialog.setTitle("删除地点 " + childName);
-        dialog.setMessage("你确定要从分组\"" + locGroup.Name + "\"中删除地点\"" + childName + "\"吗?");
+        dialog.setMessage("你确定要从分组\"" + locGroup.getName() + "\"中删除地点\"" + childName + "\"吗?");
 
         dialog.setPositiveButton(getString(R.string.txtOK), new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 locGroup.removeChild(childName);
-                mChildrenAdapterTable.remove(locGroup.Name); //remove the item from quick look-up table, so next time it can create a new one.
+                mChildrenAdapterTable.remove(locGroup.getName()); //remove the item from quick look-up table, so next time it can create a new one.
                 updateChildrenData();
-                LocationGroupManager.update(locGroup.Name, locGroup, StorageSelector.ALL);
+                StorageManager.getInstance().update(getApplication(), locGroup.getName(), locGroup);
             }
         });
         dialog.setNegativeButton(getString(R.string.txtCancle), null);
@@ -347,9 +357,9 @@ public class LocationGroupActivity extends Activity {
                 if (selChildrenNames != null) {
                     LocationGroup group = getGroup(mCurrGroupPosition);
                     group.setChildren(selChildrenNames);
-                    mChildrenAdapterTable.remove(group.Name);
+                    mChildrenAdapterTable.remove(group.getName());
                     selectGroup(mCurrGroupPosition);
-                    LocationGroupManager.update(group.Name, group, StorageSelector.ALL);
+                    StorageManager.getInstance().update(getApplication(), group.getName(), group);
                 }
             }
         }
